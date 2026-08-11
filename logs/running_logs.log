@@ -1,0 +1,511 @@
+[2026-08-11 22:42:10,771: INFO: main: >>>>>> stage Data Ingestion stage started <<<<<<]
+[2026-08-11 22:42:10,773: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-11 22:42:10,773: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-11 22:42:10,773: ERROR: main: yaml file is empty]
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\utils\common.py", line 30, in read_yaml
+    return ConfigBox(content)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\box\box.py", line 259, in __init__
+    raise BoxValueError("First argument must be mapping or iterable")
+box.exceptions.BoxValueError: First argument must be mapping or iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\main.py", line 9, in <module>
+    data_ingestion.main()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_01_data_ingestion.py", line 12, in main
+    config = ConfigurationManager()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\config\configuration.py", line 12, in __init__
+    self.params = read_yaml(params_filepath)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\ensure\main.py", line 849, in __call__
+    return_val = self.f(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\utils\common.py", line 32, in read_yaml
+    raise ValueError("yaml file is empty")
+ValueError: yaml file is empty
+[2026-08-11 22:42:27,606: INFO: main: >>>>>> stage Data Ingestion stage started <<<<<<]
+[2026-08-11 22:42:27,607: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-11 22:42:27,608: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-11 22:42:27,608: INFO: common: created directory at: artifacts]
+[2026-08-11 22:42:27,609: INFO: common: created directory at: artifacts/data_ingestion]
+[2026-08-11 22:42:27,610: INFO: data_ingestion: Connecting to PostgreSQL database]
+[2026-08-11 22:42:27,701: INFO: data_ingestion: Executing query: SELECT * FROM raw.german_credit]
+[2026-08-11 22:42:27,714: ERROR: data_ingestion: Error occurred during data ingestion: (psycopg2.OperationalError) could not translate host name "2003@localhost" to address: Non-recoverable failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)]
+[2026-08-11 22:42:27,714: ERROR: main: (psycopg2.OperationalError) could not translate host name "2003@localhost" to address: Non-recoverable failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)]
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: could not translate host name "2003@localhost" to address: Non-recoverable failure in name resolution
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\main.py", line 9, in <module>
+    data_ingestion.main()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_01_data_ingestion.py", line 15, in main
+    data_ingestion.download_data()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\data_ingestion.py", line 46, in download_data
+    raise e
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\data_ingestion.py", line 36, in download_data
+    df = pd.read_sql(query, engine)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 700, in read_sql
+    with pandasSQL_builder(con) as pandas_sql:
+         ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 908, in pandasSQL_builder
+    return SQLDatabase(con, schema, need_transaction)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 1649, in __init__
+    con = self.exit_stack.enter_context(con.connect())
+                                        ^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2450, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not translate host name "2003@localhost" to address: Non-recoverable failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-08-11 22:44:52,037: INFO: main: >>>>>> stage Data Ingestion stage started <<<<<<]
+[2026-08-11 22:44:52,049: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-11 22:44:52,052: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-11 22:44:52,056: INFO: common: created directory at: artifacts]
+[2026-08-11 22:44:52,057: INFO: common: created directory at: artifacts/data_ingestion]
+[2026-08-11 22:44:52,065: INFO: data_ingestion: Loading data from data/raw/german.data]
+[2026-08-11 22:44:52,099: INFO: data_ingestion: Data loaded successfully. Shape: (1000, 21)]
+[2026-08-11 22:44:52,116: INFO: data_ingestion: Target distribution:
+credit_risk
+0    700
+1    300
+Name: count, dtype: int64]
+[2026-08-11 22:44:52,116: INFO: data_ingestion: Connecting to PostgreSQL database]
+[2026-08-11 22:44:52,209: INFO: data_ingestion: Loading data into PostgreSQL table raw.german_credit]
+[2026-08-11 22:44:52,223: ERROR: data_ingestion: Error occurred during data ingestion: (psycopg2.OperationalError) could not translate host name "2003@localhost" to address: Non-recoverable failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)]
+[2026-08-11 22:44:52,223: ERROR: main: (psycopg2.OperationalError) could not translate host name "2003@localhost" to address: Non-recoverable failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)]
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: could not translate host name "2003@localhost" to address: Non-recoverable failure in name resolution
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\main.py", line 9, in <module>
+    data_ingestion.main()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_01_data_ingestion.py", line 15, in main
+    data_ingestion.download_data()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\data_ingestion.py", line 73, in download_data
+    raise e
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\data_ingestion.py", line 57, in download_data
+    df.to_sql(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\core\generic.py", line 3040, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 840, in to_sql
+    with pandasSQL_builder(con, schema=schema, need_transaction=True) as pandas_sql:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 908, in pandasSQL_builder
+    return SQLDatabase(con, schema, need_transaction)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 1649, in __init__
+    con = self.exit_stack.enter_context(con.connect())
+                                        ^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in connect
+    return self._connection_cls(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2450, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not translate host name "2003@localhost" to address: Non-recoverable failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-08-11 22:46:08,532: INFO: main: >>>>>> stage Data Ingestion stage started <<<<<<]
+[2026-08-11 22:46:08,532: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-11 22:46:08,535: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-11 22:46:08,535: INFO: common: created directory at: artifacts]
+[2026-08-11 22:46:08,535: INFO: common: created directory at: artifacts/data_ingestion]
+[2026-08-11 22:46:08,536: INFO: data_ingestion: Loading data from data/raw/german.data]
+[2026-08-11 22:46:08,543: INFO: data_ingestion: Data loaded successfully. Shape: (1000, 21)]
+[2026-08-11 22:46:08,546: INFO: data_ingestion: Target distribution:
+credit_risk
+0    700
+1    300
+Name: count, dtype: int64]
+[2026-08-11 22:46:08,546: INFO: data_ingestion: Connecting to PostgreSQL database]
+[2026-08-11 22:46:08,626: INFO: data_ingestion: Loading data into PostgreSQL table raw.german_credit]
+[2026-08-11 22:46:08,794: ERROR: data_ingestion: Error occurred during data ingestion: (psycopg2.errors.InvalidSchemaName) schema "raw" does not exist
+LINE 2: CREATE TABLE raw.german_credit (
+                     ^
+
+[SQL: 
+CREATE TABLE raw.german_credit (
+	checking_account TEXT, 
+	duration BIGINT, 
+	credit_history TEXT, 
+	purpose TEXT, 
+	credit_amount BIGINT, 
+	savings_account TEXT, 
+	employment TEXT, 
+	installment_rate BIGINT, 
+	personal_status_sex TEXT, 
+	other_debtors TEXT, 
+	residence_since BIGINT, 
+	property TEXT, 
+	age BIGINT, 
+	other_installment_plans TEXT, 
+	housing TEXT, 
+	existing_credits BIGINT, 
+	job TEXT, 
+	dependents BIGINT, 
+	telephone TEXT, 
+	foreign_worker TEXT, 
+	credit_risk BIGINT
+)
+
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)]
+[2026-08-11 22:46:08,794: ERROR: main: (psycopg2.errors.InvalidSchemaName) schema "raw" does not exist
+LINE 2: CREATE TABLE raw.german_credit (
+                     ^
+
+[SQL: 
+CREATE TABLE raw.german_credit (
+	checking_account TEXT, 
+	duration BIGINT, 
+	credit_history TEXT, 
+	purpose TEXT, 
+	credit_amount BIGINT, 
+	savings_account TEXT, 
+	employment TEXT, 
+	installment_rate BIGINT, 
+	personal_status_sex TEXT, 
+	other_debtors TEXT, 
+	residence_since BIGINT, 
+	property TEXT, 
+	age BIGINT, 
+	other_installment_plans TEXT, 
+	housing TEXT, 
+	existing_credits BIGINT, 
+	job TEXT, 
+	dependents BIGINT, 
+	telephone TEXT, 
+	foreign_worker TEXT, 
+	credit_risk BIGINT
+)
+
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)]
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.InvalidSchemaName: schema "raw" does not exist
+LINE 2: CREATE TABLE raw.german_credit (
+                     ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\main.py", line 9, in <module>
+    data_ingestion.main()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_01_data_ingestion.py", line 15, in main
+    data_ingestion.download_data()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\data_ingestion.py", line 77, in download_data
+    raise e
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\data_ingestion.py", line 61, in download_data
+    df.to_sql(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\core\generic.py", line 3040, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 841, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 2027, in to_sql
+    table = self.prep_table(
+            ^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 1932, in prep_table
+    table.create()
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 999, in create
+    self._execute_create()
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\io\sql.py", line 983, in _execute_create
+    self.table.create(bind=self.pd_sql.con)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\sql\schema.py", line 1289, in create
+    bind._run_ddl_visitor(ddl.SchemaGenerator, self, checkfirst=checkfirst)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2469, in _run_ddl_visitor
+    ).traverse_single(element)
+      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\sql\visitors.py", line 661, in traverse_single
+    return meth(obj, **kw)
+           ^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\sql\ddl.py", line 1023, in visit_table
+    )._invoke_with(self.connection)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\sql\ddl.py", line 322, in _invoke_with
+    return bind.execute(self)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\sql\ddl.py", line 188, in _execute_on_connection
+    return connection._execute_ddl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1532, in _execute_ddl
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.InvalidSchemaName) schema "raw" does not exist
+LINE 2: CREATE TABLE raw.german_credit (
+                     ^
+
+[SQL: 
+CREATE TABLE raw.german_credit (
+	checking_account TEXT, 
+	duration BIGINT, 
+	credit_history TEXT, 
+	purpose TEXT, 
+	credit_amount BIGINT, 
+	savings_account TEXT, 
+	employment TEXT, 
+	installment_rate BIGINT, 
+	personal_status_sex TEXT, 
+	other_debtors TEXT, 
+	residence_since BIGINT, 
+	property TEXT, 
+	age BIGINT, 
+	other_installment_plans TEXT, 
+	housing TEXT, 
+	existing_credits BIGINT, 
+	job TEXT, 
+	dependents BIGINT, 
+	telephone TEXT, 
+	foreign_worker TEXT, 
+	credit_risk BIGINT
+)
+
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[2026-08-11 22:47:08,140: INFO: main: >>>>>> stage Data Ingestion stage started <<<<<<]
+[2026-08-11 22:47:08,141: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-11 22:47:08,142: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-11 22:47:08,143: INFO: common: created directory at: artifacts]
+[2026-08-11 22:47:08,143: INFO: common: created directory at: artifacts/data_ingestion]
+[2026-08-11 22:47:08,144: INFO: data_ingestion: Loading data from data/raw/german.data]
+[2026-08-11 22:47:08,149: INFO: data_ingestion: Data loaded successfully. Shape: (1000, 21)]
+[2026-08-11 22:47:08,153: INFO: data_ingestion: Target distribution:
+credit_risk
+0    700
+1    300
+Name: count, dtype: int64]
+[2026-08-11 22:47:08,153: INFO: data_ingestion: Connecting to PostgreSQL database]
+[2026-08-11 22:47:08,301: INFO: data_ingestion: Loading data into PostgreSQL table raw.german_credit]
+[2026-08-11 22:47:08,561: INFO: data_ingestion: Data successfully loaded into PostgreSQL.]
+[2026-08-11 22:47:08,561: INFO: data_ingestion: Saving data to artifacts/data_ingestion/data.csv]
+[2026-08-11 22:47:08,593: INFO: data_ingestion: Data successfully saved at artifacts/data_ingestion/data.csv]
+[2026-08-11 22:47:08,593: INFO: main: >>>>>> stage Data Ingestion stage completed <<<<<<
+
+x==========x]
