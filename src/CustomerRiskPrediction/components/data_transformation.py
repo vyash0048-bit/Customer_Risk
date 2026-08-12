@@ -17,6 +17,7 @@ class DataTransformation:
         try:
             logger.info("Reading data from ingestion artifacts")
             df = pd.read_csv(self.config.data_path)
+            logger.info(f"df.dtypes:\n{df.dtypes}")
 
             logger.info("Splitting data into train, val, test")
             train, temp = train_test_split(
@@ -52,7 +53,8 @@ class DataTransformation:
             test['duration_binned'] = test['duration_binned'].astype(str)
 
             logger.info("Calculating WOE & IV mapping on Train Data")
-            categorical_cols = [col for col in df.columns if df[col].dtype == 'object' and col != 'credit_risk']
+            categorical_cols = [col for col in df.columns if df[col].dtype.name in ['object', 'category', 'string', 'str'] and col != 'credit_risk']
+            logger.info(f"Categorical cols identified: {categorical_cols}")
             candidate_features = categorical_cols + ['age_binned', 'duration_binned']
             
             all_woe_rules = []
@@ -81,7 +83,7 @@ class DataTransformation:
                 test = transform_to_woe(test, f, rules)
 
             # Keep only original non-categorical features and newly created WOE features
-            numerical_cols = [col for col in df.columns if df[col].dtype != 'object' and col != 'credit_risk']
+            numerical_cols = [col for col in df.columns if df[col].dtype.name not in ['object', 'category', 'string', 'str'] and col != 'credit_risk']
             woe_cols = [f"{f}_WOE" for f in features_to_transform]
             final_columns = numerical_cols + woe_cols + ['credit_risk']
 

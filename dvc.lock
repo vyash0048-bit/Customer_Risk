@@ -5,8 +5,8 @@ stages:
     deps:
     - path: config/config.yaml
       hash: md5
-      md5: e329f88ad8676281a7791472445c1e98
-      size: 571
+      md5: 5fea8c844857d356fb61d97be9984fc1
+      size: 709
     - path: src/CustomerRiskPrediction/components/data_ingestion.py
       hash: md5
       md5: 6de4171182899133c0aab37c39804913
@@ -30,12 +30,12 @@ stages:
       size: 81065
     - path: config/config.yaml
       hash: md5
-      md5: e329f88ad8676281a7791472445c1e98
-      size: 571
+      md5: 5fea8c844857d356fb61d97be9984fc1
+      size: 709
     - path: src/CustomerRiskPrediction/components/data_transformation.py
       hash: md5
-      md5: f830c98c3cc772af1b1b48f9c2966638
-      size: 4887
+      md5: 8c731923359797d7d1979005fc66bdc4
+      size: 5091
     - path: src/CustomerRiskPrediction/pipeline/stage_02_data_transformation.py
       hash: md5
       md5: 32d9b8c3b9530b905cdcef9d2982a6b5
@@ -47,17 +47,46 @@ stages:
     outs:
     - path: artifacts/data_transformation/test.csv
       hash: md5
-      md5: 751fea7ff8a33b8c63aee282dd6d88bd
-      size: 18511
+      md5: 40e7f275a16187be9c63dcc38cff091b
+      size: 46162
     - path: artifacts/data_transformation/train.csv
       hash: md5
-      md5: 4b4ff9604ea6e299b9b3d7bfd46e00da
-      size: 85357
+      md5: 092c59ff0835406865a49b5b449f5550
+      size: 214280
     - path: artifacts/data_transformation/val.csv
       hash: md5
-      md5: 8dac728dca6c477f86d247aa197d1479
-      size: 18552
+      md5: e6ce54a1cdbb2951e5093d5d7e1600f7
+      size: 46260
     - path: artifacts/data_transformation/woe_rules.csv
       hash: md5
-      md5: 5c7593cabd1b83fbbc6ed97dbde8b08b
-      size: 1219
+      md5: dd46420fb45d007b92c4a915f0cb8a87
+      size: 6797
+  model_trainer:
+    cmd: python src/CustomerRiskPrediction/pipeline/stage_03_model_trainer.py
+    deps:
+    - path: artifacts/data_transformation/train.csv
+      hash: md5
+      md5: 092c59ff0835406865a49b5b449f5550
+      size: 214280
+    - path: config/config.yaml
+      hash: md5
+      md5: 5fea8c844857d356fb61d97be9984fc1
+      size: 709
+    - path: src/CustomerRiskPrediction/components/model_trainer.py
+      hash: md5
+      md5: ed46cf9b474a8028b06b449968c549c3
+      size: 1510
+    - path: src/CustomerRiskPrediction/pipeline/stage_03_model_trainer.py
+      hash: md5
+      md5: 2e944a2e12e7d23cff46b4990fe84eef
+      size: 851
+    params:
+      params.yaml:
+        LogisticRegression.max_iter: 1000
+        LogisticRegression.random_state: 42
+        LogisticRegression.solver: liblinear
+    outs:
+    - path: artifacts/model_trainer/model.joblib
+      hash: md5
+      md5: 71f65002b8c73471ba2e18de527ee06c
+      size: 1499

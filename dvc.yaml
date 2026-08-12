@@ -21,3 +21,17 @@ stages:
       - artifacts/data_transformation/val.csv
       - artifacts/data_transformation/test.csv
       - artifacts/data_transformation/woe_rules.csv
+
+  model_trainer:
+    cmd: python src/CustomerRiskPrediction/pipeline/stage_03_model_trainer.py
+    deps:
+      - src/CustomerRiskPrediction/pipeline/stage_03_model_trainer.py
+      - src/CustomerRiskPrediction/components/model_trainer.py
+      - config/config.yaml
+      - artifacts/data_transformation/train.csv
+    params:
+      - LogisticRegression.max_iter
+      - LogisticRegression.random_state
+      - LogisticRegression.solver
+    outs:
+      - artifacts/model_trainer/model.joblib

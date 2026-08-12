@@ -567,3 +567,272 @@ x==========x]
 [2026-08-12 12:13:52,640: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage completed <<<<<<
 
 x==========x]
+[2026-08-12 12:19:48,520: INFO: stage_01_data_ingestion: >>>>>> stage Data Ingestion stage started <<<<<<]
+[2026-08-12 12:19:48,521: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:19:48,524: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:19:48,525: INFO: common: created directory at: artifacts]
+[2026-08-12 12:19:48,525: INFO: common: created directory at: artifacts/data_ingestion]
+[2026-08-12 12:19:48,528: INFO: data_ingestion: Loading data from data/raw/german.data]
+[2026-08-12 12:19:48,537: INFO: data_ingestion: Data loaded successfully. Shape: (1000, 21)]
+[2026-08-12 12:19:48,546: INFO: data_ingestion: Target distribution:
+credit_risk
+0    700
+1    300
+Name: count, dtype: int64]
+[2026-08-12 12:19:48,546: INFO: data_ingestion: Connecting to PostgreSQL database]
+[2026-08-12 12:19:48,889: INFO: data_ingestion: Loading data into PostgreSQL table raw.german_credit]
+[2026-08-12 12:19:48,991: INFO: data_ingestion: Data successfully loaded into PostgreSQL.]
+[2026-08-12 12:19:48,992: INFO: data_ingestion: Saving data to artifacts/data_ingestion/data.csv]
+[2026-08-12 12:19:49,002: INFO: data_ingestion: Data successfully saved at artifacts/data_ingestion/data.csv]
+[2026-08-12 12:19:49,002: INFO: stage_01_data_ingestion: >>>>>> stage Data Ingestion stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:19:52,201: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage started <<<<<<]
+[2026-08-12 12:19:52,203: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:19:52,206: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:19:52,207: INFO: common: created directory at: artifacts]
+[2026-08-12 12:19:52,207: INFO: common: created directory at: artifacts/data_transformation]
+[2026-08-12 12:19:52,207: INFO: data_transformation: Reading data from ingestion artifacts]
+[2026-08-12 12:19:52,231: INFO: data_transformation: Splitting data into train, val, test]
+[2026-08-12 12:19:52,314: INFO: data_transformation: Train size: (700, 21), Val size: (150, 21), Test size: (150, 21)]
+[2026-08-12 12:19:52,314: INFO: data_transformation: Binning numerical variables]
+[2026-08-12 12:19:52,329: INFO: data_transformation: Calculating WOE & IV mapping on Train Data]
+[2026-08-12 12:19:52,346: INFO: data_transformation: Feature 'age_binned' IV: 0.0744 (Keep)]
+[2026-08-12 12:19:52,361: INFO: data_transformation: Feature 'duration_binned' IV: 0.1871 (Keep)]
+[2026-08-12 12:19:52,363: INFO: data_transformation: Applying WOE transformation]
+[2026-08-12 12:19:52,389: INFO: data_transformation: Saving transformed datasets and WOE rules to artifacts/data_transformation]
+[2026-08-12 12:19:52,428: INFO: data_transformation: Data Transformation completed successfully]
+[2026-08-12 12:19:52,429: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:19:56,699: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage started <<<<<<]
+[2026-08-12 12:19:56,701: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:19:56,704: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:19:56,705: INFO: common: created directory at: artifacts]
+[2026-08-12 12:19:56,705: INFO: common: created directory at: artifacts/model_trainer]
+[2026-08-12 12:19:56,706: INFO: model_trainer: Reading train data]
+[2026-08-12 12:19:56,745: INFO: model_trainer: Training Logistic Regression with solver=liblinear, max_iter=1000]
+[2026-08-12 12:19:56,792: ERROR: model_trainer: Error in Model Trainer: could not convert string to float: 'A12']
+[2026-08-12 12:19:56,792: ERROR: stage_03_model_trainer: could not convert string to float: 'A12']
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_03_model_trainer.py", line 21, in <module>
+    obj.main()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_03_model_trainer.py", line 15, in main
+    model_trainer.train()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\model_trainer.py", line 42, in train
+    raise e
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\model_trainer.py", line 32, in train
+    lr.fit(X_train, y_train)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\linear_model\_logistic.py", line 1459, in fit
+    X, y = validate_data(
+           ^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\utils\validation.py", line 3055, in validate_data
+    X, y = check_X_y(X, y, **check_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\utils\validation.py", line 1327, in check_X_y
+    X = check_array(
+        ^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\utils\validation.py", line 1035, in check_array
+    array = _asarray_with_order(array, order=order, dtype=dtype, xp=xp)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\utils\_array_api.py", line 976, in _asarray_with_order
+    array = numpy.asarray(array, order=order, dtype=dtype)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\pandas\core\generic.py", line 2027, in __array__
+    arr = np.asarray(values, dtype=dtype)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: could not convert string to float: 'A12'
+[2026-08-12 12:22:53,033: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage started <<<<<<]
+[2026-08-12 12:22:53,037: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:22:53,041: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:22:53,041: INFO: common: created directory at: artifacts]
+[2026-08-12 12:22:53,042: INFO: common: created directory at: artifacts/data_transformation]
+[2026-08-12 12:22:53,042: INFO: data_transformation: Reading data from ingestion artifacts]
+[2026-08-12 12:22:53,055: INFO: data_transformation: Splitting data into train, val, test]
+[2026-08-12 12:22:53,075: INFO: data_transformation: Train size: (700, 21), Val size: (150, 21), Test size: (150, 21)]
+[2026-08-12 12:22:53,075: INFO: data_transformation: Binning numerical variables]
+[2026-08-12 12:22:53,124: INFO: data_transformation: Calculating WOE & IV mapping on Train Data]
+[2026-08-12 12:22:53,148: INFO: data_transformation: Feature 'checking_account' IV: 0.6388 (Keep)]
+[2026-08-12 12:22:53,156: INFO: data_transformation: Feature 'credit_history' IV: 0.2544 (Keep)]
+[2026-08-12 12:22:53,168: INFO: data_transformation: Feature 'purpose' IV: 0.1322 (Keep)]
+[2026-08-12 12:22:53,228: INFO: data_transformation: Feature 'savings_account' IV: 0.2335 (Keep)]
+[2026-08-12 12:22:53,241: INFO: data_transformation: Feature 'employment' IV: 0.1403 (Keep)]
+[2026-08-12 12:22:53,265: INFO: data_transformation: Feature 'personal_status_sex' IV: 0.0392 (Keep)]
+[2026-08-12 12:22:53,277: INFO: data_transformation: Feature 'other_debtors' IV: 0.0267 (Keep)]
+[2026-08-12 12:22:53,292: INFO: data_transformation: Feature 'property' IV: 0.1402 (Keep)]
+[2026-08-12 12:22:53,303: INFO: data_transformation: Feature 'other_installment_plans' IV: 0.1169 (Keep)]
+[2026-08-12 12:22:53,319: INFO: data_transformation: Feature 'housing' IV: 0.1020 (Keep)]
+[2026-08-12 12:22:53,341: INFO: data_transformation: Feature 'job' IV: 0.0228 (Keep)]
+[2026-08-12 12:22:53,357: INFO: data_transformation: Feature 'telephone' IV: 0.0029 (Remove)]
+[2026-08-12 12:22:53,371: INFO: data_transformation: Feature 'foreign_worker' IV: 0.0767 (Keep)]
+[2026-08-12 12:22:53,386: INFO: data_transformation: Feature 'age_binned' IV: 0.0744 (Keep)]
+[2026-08-12 12:22:53,399: INFO: data_transformation: Feature 'duration_binned' IV: 0.1871 (Keep)]
+[2026-08-12 12:22:53,406: INFO: data_transformation: Applying WOE transformation]
+[2026-08-12 12:22:53,462: INFO: data_transformation: Saving transformed datasets and WOE rules to artifacts/data_transformation]
+[2026-08-12 12:22:53,503: INFO: data_transformation: Data Transformation completed successfully]
+[2026-08-12 12:22:53,504: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:23:23,201: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage started <<<<<<]
+[2026-08-12 12:23:23,203: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:23:23,204: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:23:23,205: INFO: common: created directory at: artifacts]
+[2026-08-12 12:23:23,205: INFO: common: created directory at: artifacts/model_trainer]
+[2026-08-12 12:23:23,205: INFO: model_trainer: Reading train data]
+[2026-08-12 12:23:23,242: INFO: model_trainer: Using WOE features for training: ['age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:23:23,244: INFO: model_trainer: Training Logistic Regression with solver=liblinear, max_iter=1000]
+[2026-08-12 12:23:23,315: INFO: model_trainer: Saving model to artifacts/model_trainer\model.joblib]
+[2026-08-12 12:23:23,318: INFO: model_trainer: Model Trainer stage completed successfully]
+[2026-08-12 12:23:23,318: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:25:04,214: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage started <<<<<<]
+[2026-08-12 12:25:04,217: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:25:04,219: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:25:04,219: INFO: common: created directory at: artifacts]
+[2026-08-12 12:25:04,220: INFO: common: created directory at: artifacts/data_transformation]
+[2026-08-12 12:25:04,220: INFO: data_transformation: Reading data from ingestion artifacts]
+[2026-08-12 12:25:04,227: INFO: data_transformation: Splitting data into train, val, test]
+[2026-08-12 12:25:04,290: INFO: data_transformation: Train size: (700, 21), Val size: (150, 21), Test size: (150, 21)]
+[2026-08-12 12:25:04,290: INFO: data_transformation: Binning numerical variables]
+[2026-08-12 12:25:04,317: INFO: data_transformation: Calculating WOE & IV mapping on Train Data]
+[2026-08-12 12:25:04,331: INFO: data_transformation: Feature 'age_binned' IV: 0.0744 (Keep)]
+[2026-08-12 12:25:04,338: INFO: data_transformation: Feature 'duration_binned' IV: 0.1871 (Keep)]
+[2026-08-12 12:25:04,340: INFO: data_transformation: Applying WOE transformation]
+[2026-08-12 12:25:04,356: INFO: data_transformation: Saving transformed datasets and WOE rules to artifacts/data_transformation]
+[2026-08-12 12:25:04,388: INFO: data_transformation: Data Transformation completed successfully]
+[2026-08-12 12:25:04,389: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:26:00,628: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage started <<<<<<]
+[2026-08-12 12:26:00,630: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:26:00,632: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:26:00,633: INFO: common: created directory at: artifacts]
+[2026-08-12 12:26:00,633: INFO: common: created directory at: artifacts/data_transformation]
+[2026-08-12 12:26:00,633: INFO: data_transformation: Reading data from ingestion artifacts]
+[2026-08-12 12:26:00,641: INFO: data_transformation: Splitting data into train, val, test]
+[2026-08-12 12:26:00,692: INFO: data_transformation: Train size: (700, 21), Val size: (150, 21), Test size: (150, 21)]
+[2026-08-12 12:26:00,693: INFO: data_transformation: Binning numerical variables]
+[2026-08-12 12:26:00,705: INFO: data_transformation: Calculating WOE & IV mapping on Train Data]
+[2026-08-12 12:26:00,707: INFO: data_transformation: Categorical cols identified: []]
+[2026-08-12 12:26:00,721: INFO: data_transformation: Feature 'age_binned' IV: 0.0744 (Keep)]
+[2026-08-12 12:26:00,733: INFO: data_transformation: Feature 'duration_binned' IV: 0.1871 (Keep)]
+[2026-08-12 12:26:00,734: INFO: data_transformation: Applying WOE transformation]
+[2026-08-12 12:26:00,749: INFO: data_transformation: Saving transformed datasets and WOE rules to artifacts/data_transformation]
+[2026-08-12 12:26:00,778: INFO: data_transformation: Data Transformation completed successfully]
+[2026-08-12 12:26:00,780: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:26:23,912: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage started <<<<<<]
+[2026-08-12 12:26:23,914: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:26:23,916: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:26:23,916: INFO: common: created directory at: artifacts]
+[2026-08-12 12:26:23,917: INFO: common: created directory at: artifacts/data_transformation]
+[2026-08-12 12:26:23,917: INFO: data_transformation: Reading data from ingestion artifacts]
+[2026-08-12 12:26:23,924: INFO: data_transformation: df.dtypes:
+checking_account             str
+duration                   int64
+credit_history               str
+purpose                      str
+credit_amount              int64
+savings_account              str
+employment                   str
+installment_rate           int64
+personal_status_sex          str
+other_debtors                str
+residence_since            int64
+property                     str
+age                        int64
+other_installment_plans      str
+housing                      str
+existing_credits           int64
+job                          str
+dependents                 int64
+telephone                    str
+foreign_worker               str
+credit_risk                int64
+dtype: object]
+[2026-08-12 12:26:23,925: INFO: data_transformation: Splitting data into train, val, test]
+[2026-08-12 12:26:23,988: INFO: data_transformation: Train size: (700, 21), Val size: (150, 21), Test size: (150, 21)]
+[2026-08-12 12:26:23,988: INFO: data_transformation: Binning numerical variables]
+[2026-08-12 12:26:24,017: INFO: data_transformation: Calculating WOE & IV mapping on Train Data]
+[2026-08-12 12:26:24,018: INFO: data_transformation: Categorical cols identified: []]
+[2026-08-12 12:26:24,031: INFO: data_transformation: Feature 'age_binned' IV: 0.0744 (Keep)]
+[2026-08-12 12:26:24,045: INFO: data_transformation: Feature 'duration_binned' IV: 0.1871 (Keep)]
+[2026-08-12 12:26:24,048: INFO: data_transformation: Applying WOE transformation]
+[2026-08-12 12:26:24,061: INFO: data_transformation: Saving transformed datasets and WOE rules to artifacts/data_transformation]
+[2026-08-12 12:26:24,098: INFO: data_transformation: Data Transformation completed successfully]
+[2026-08-12 12:26:24,101: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:26:53,599: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage started <<<<<<]
+[2026-08-12 12:26:53,601: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:26:53,602: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:26:53,603: INFO: common: created directory at: artifacts]
+[2026-08-12 12:26:53,603: INFO: common: created directory at: artifacts/data_transformation]
+[2026-08-12 12:26:53,603: INFO: data_transformation: Reading data from ingestion artifacts]
+[2026-08-12 12:26:53,614: INFO: data_transformation: df.dtypes:
+checking_account             str
+duration                   int64
+credit_history               str
+purpose                      str
+credit_amount              int64
+savings_account              str
+employment                   str
+installment_rate           int64
+personal_status_sex          str
+other_debtors                str
+residence_since            int64
+property                     str
+age                        int64
+other_installment_plans      str
+housing                      str
+existing_credits           int64
+job                          str
+dependents                 int64
+telephone                    str
+foreign_worker               str
+credit_risk                int64
+dtype: object]
+[2026-08-12 12:26:53,614: INFO: data_transformation: Splitting data into train, val, test]
+[2026-08-12 12:26:53,700: INFO: data_transformation: Train size: (700, 21), Val size: (150, 21), Test size: (150, 21)]
+[2026-08-12 12:26:53,700: INFO: data_transformation: Binning numerical variables]
+[2026-08-12 12:26:53,712: INFO: data_transformation: Calculating WOE & IV mapping on Train Data]
+[2026-08-12 12:26:53,713: INFO: data_transformation: Categorical cols identified: ['checking_account', 'credit_history', 'purpose', 'savings_account', 'employment', 'personal_status_sex', 'other_debtors', 'property', 'other_installment_plans', 'housing', 'job', 'telephone', 'foreign_worker']]
+[2026-08-12 12:26:53,720: INFO: data_transformation: Feature 'checking_account' IV: 0.6388 (Keep)]
+[2026-08-12 12:26:53,734: INFO: data_transformation: Feature 'credit_history' IV: 0.2544 (Keep)]
+[2026-08-12 12:26:53,741: INFO: data_transformation: Feature 'purpose' IV: 0.1322 (Keep)]
+[2026-08-12 12:26:53,760: INFO: data_transformation: Feature 'savings_account' IV: 0.2335 (Keep)]
+[2026-08-12 12:26:53,772: INFO: data_transformation: Feature 'employment' IV: 0.1403 (Keep)]
+[2026-08-12 12:26:53,786: INFO: data_transformation: Feature 'personal_status_sex' IV: 0.0392 (Keep)]
+[2026-08-12 12:26:53,793: INFO: data_transformation: Feature 'other_debtors' IV: 0.0267 (Keep)]
+[2026-08-12 12:26:53,805: INFO: data_transformation: Feature 'property' IV: 0.1402 (Keep)]
+[2026-08-12 12:26:53,819: INFO: data_transformation: Feature 'other_installment_plans' IV: 0.1169 (Keep)]
+[2026-08-12 12:26:53,825: INFO: data_transformation: Feature 'housing' IV: 0.1020 (Keep)]
+[2026-08-12 12:26:53,832: INFO: data_transformation: Feature 'job' IV: 0.0228 (Keep)]
+[2026-08-12 12:26:53,838: INFO: data_transformation: Feature 'telephone' IV: 0.0029 (Remove)]
+[2026-08-12 12:26:53,848: INFO: data_transformation: Feature 'foreign_worker' IV: 0.0767 (Keep)]
+[2026-08-12 12:26:53,861: INFO: data_transformation: Feature 'age_binned' IV: 0.0744 (Keep)]
+[2026-08-12 12:26:53,873: INFO: data_transformation: Feature 'duration_binned' IV: 0.1871 (Keep)]
+[2026-08-12 12:26:53,876: INFO: data_transformation: Applying WOE transformation]
+[2026-08-12 12:26:53,943: INFO: data_transformation: Saving transformed datasets and WOE rules to artifacts/data_transformation]
+[2026-08-12 12:26:53,981: INFO: data_transformation: Data Transformation completed successfully]
+[2026-08-12 12:26:53,982: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:26:56,789: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage started <<<<<<]
+[2026-08-12 12:26:56,792: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:26:56,794: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:26:56,795: INFO: common: created directory at: artifacts]
+[2026-08-12 12:26:56,796: INFO: common: created directory at: artifacts/model_trainer]
+[2026-08-12 12:26:56,796: INFO: model_trainer: Reading train data]
+[2026-08-12 12:26:56,842: INFO: model_trainer: Using WOE features for training: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:26:56,844: INFO: model_trainer: Training Logistic Regression with solver=liblinear, max_iter=1000]
+[2026-08-12 12:26:56,922: INFO: model_trainer: Saving model to artifacts/model_trainer\model.joblib]
+[2026-08-12 12:26:56,924: INFO: model_trainer: Model Trainer stage completed successfully]
+[2026-08-12 12:26:56,925: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage completed <<<<<<
+
+x==========x]

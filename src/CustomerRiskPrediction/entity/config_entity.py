@@ -16,3 +16,13 @@ class DataTransformationConfig:
     transformed_val_path: Path
     transformed_test_path: Path
     woe_rules_path: Path
+
+@dataclass(frozen=True)
+class ModelTrainerConfig:
+    root_dir: Path
+    train_data_path: Path
+    model_name: str
+    target_column: str
+    max_iter: int
+    random_state: int
+    solver: str
