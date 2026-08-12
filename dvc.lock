@@ -5,8 +5,8 @@ stages:
     deps:
     - path: config/config.yaml
       hash: md5
-      md5: 5fea8c844857d356fb61d97be9984fc1
-      size: 709
+      md5: 0974f1c6618eb4b8e86f02f5486c80b1
+      size: 935
     - path: src/CustomerRiskPrediction/components/data_ingestion.py
       hash: md5
       md5: 6de4171182899133c0aab37c39804913
@@ -30,8 +30,8 @@ stages:
       size: 81065
     - path: config/config.yaml
       hash: md5
-      md5: 5fea8c844857d356fb61d97be9984fc1
-      size: 709
+      md5: 0974f1c6618eb4b8e86f02f5486c80b1
+      size: 935
     - path: src/CustomerRiskPrediction/components/data_transformation.py
       hash: md5
       md5: 8c731923359797d7d1979005fc66bdc4
@@ -42,13 +42,13 @@ stages:
       size: 934
     - path: src/woe_iv.py
       hash: md5
-      md5: 5b3a87c00fd806766659af738b691231
-      size: 2409
+      md5: da215b6d09140fcc31a1304aa55252b7
+      size: 2421
     outs:
     - path: artifacts/data_transformation/test.csv
       hash: md5
-      md5: 40e7f275a16187be9c63dcc38cff091b
-      size: 46162
+      md5: 15965c8d5dd92a90733e178f9c4df582
+      size: 46165
     - path: artifacts/data_transformation/train.csv
       hash: md5
       md5: 092c59ff0835406865a49b5b449f5550
@@ -70,8 +70,8 @@ stages:
       size: 214280
     - path: config/config.yaml
       hash: md5
-      md5: 5fea8c844857d356fb61d97be9984fc1
-      size: 709
+      md5: 0974f1c6618eb4b8e86f02f5486c80b1
+      size: 935
     - path: src/CustomerRiskPrediction/components/model_trainer.py
       hash: md5
       md5: ed46cf9b474a8028b06b449968c549c3
@@ -90,3 +90,31 @@ stages:
       hash: md5
       md5: 71f65002b8c73471ba2e18de527ee06c
       size: 1499
+  model_evaluation:
+    cmd: python src/CustomerRiskPrediction/pipeline/stage_04_model_evaluation.py
+    deps:
+    - path: artifacts/data_transformation/test.csv
+      hash: md5
+      md5: 15965c8d5dd92a90733e178f9c4df582
+      size: 46165
+    - path: artifacts/model_trainer/model.joblib
+      hash: md5
+      md5: 71f65002b8c73471ba2e18de527ee06c
+      size: 1499
+    - path: config/config.yaml
+      hash: md5
+      md5: 0974f1c6618eb4b8e86f02f5486c80b1
+      size: 935
+    - path: src/CustomerRiskPrediction/components/model_evaluation.py
+      hash: md5
+      md5: 4a4c7f52d7b44052fbe1068555eae30d
+      size: 2757
+    - path: src/CustomerRiskPrediction/pipeline/stage_04_model_evaluation.py
+      hash: md5
+      md5: ff6aef486f886b013c57c5c037669ee2
+      size: 891
+    outs:
+    - path: artifacts/model_evaluation/metrics.json
+      hash: md5
+      md5: ccc4888c6afac6137a2068dc4e84f691
+      size: 405

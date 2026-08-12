@@ -26,3 +26,11 @@ class ModelTrainerConfig:
     max_iter: int
     random_state: int
     solver: str
+
+@dataclass(frozen=True)
+class ModelEvaluationConfig:
+    root_dir: Path
+    test_data_path: Path
+    model_path: Path
+    metric_file_name: Path
+    target_column: str

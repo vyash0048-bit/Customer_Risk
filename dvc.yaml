@@ -35,3 +35,14 @@ stages:
       - LogisticRegression.solver
     outs:
       - artifacts/model_trainer/model.joblib
+
+  model_evaluation:
+    cmd: python src/CustomerRiskPrediction/pipeline/stage_04_model_evaluation.py
+    deps:
+      - src/CustomerRiskPrediction/pipeline/stage_04_model_evaluation.py
+      - src/CustomerRiskPrediction/components/model_evaluation.py
+      - config/config.yaml
+      - artifacts/data_transformation/test.csv
+      - artifacts/model_trainer/model.joblib
+    outs:
+      - artifacts/model_evaluation/metrics.json

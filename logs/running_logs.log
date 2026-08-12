@@ -836,3 +836,200 @@ x==========x]
 [2026-08-12 12:26:56,925: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage completed <<<<<<
 
 x==========x]
+[2026-08-12 12:29:43,139: INFO: stage_01_data_ingestion: >>>>>> stage Data Ingestion stage started <<<<<<]
+[2026-08-12 12:29:43,141: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:29:43,142: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:29:43,144: INFO: common: created directory at: artifacts]
+[2026-08-12 12:29:43,144: INFO: common: created directory at: artifacts/data_ingestion]
+[2026-08-12 12:29:43,146: INFO: data_ingestion: Loading data from data/raw/german.data]
+[2026-08-12 12:29:43,153: INFO: data_ingestion: Data loaded successfully. Shape: (1000, 21)]
+[2026-08-12 12:29:43,158: INFO: data_ingestion: Target distribution:
+credit_risk
+0    700
+1    300
+Name: count, dtype: int64]
+[2026-08-12 12:29:43,158: INFO: data_ingestion: Connecting to PostgreSQL database]
+[2026-08-12 12:29:43,346: INFO: data_ingestion: Loading data into PostgreSQL table raw.german_credit]
+[2026-08-12 12:29:43,460: INFO: data_ingestion: Data successfully loaded into PostgreSQL.]
+[2026-08-12 12:29:43,461: INFO: data_ingestion: Saving data to artifacts/data_ingestion/data.csv]
+[2026-08-12 12:29:43,472: INFO: data_ingestion: Data successfully saved at artifacts/data_ingestion/data.csv]
+[2026-08-12 12:29:43,473: INFO: stage_01_data_ingestion: >>>>>> stage Data Ingestion stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:29:46,068: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage started <<<<<<]
+[2026-08-12 12:29:46,070: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:29:46,072: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:29:46,073: INFO: common: created directory at: artifacts]
+[2026-08-12 12:29:46,073: INFO: common: created directory at: artifacts/data_transformation]
+[2026-08-12 12:29:46,073: INFO: data_transformation: Reading data from ingestion artifacts]
+[2026-08-12 12:29:46,099: INFO: data_transformation: df.dtypes:
+checking_account             str
+duration                   int64
+credit_history               str
+purpose                      str
+credit_amount              int64
+savings_account              str
+employment                   str
+installment_rate           int64
+personal_status_sex          str
+other_debtors                str
+residence_since            int64
+property                     str
+age                        int64
+other_installment_plans      str
+housing                      str
+existing_credits           int64
+job                          str
+dependents                 int64
+telephone                    str
+foreign_worker               str
+credit_risk                int64
+dtype: object]
+[2026-08-12 12:29:46,100: INFO: data_transformation: Splitting data into train, val, test]
+[2026-08-12 12:29:46,218: INFO: data_transformation: Train size: (700, 21), Val size: (150, 21), Test size: (150, 21)]
+[2026-08-12 12:29:46,218: INFO: data_transformation: Binning numerical variables]
+[2026-08-12 12:29:46,232: INFO: data_transformation: Calculating WOE & IV mapping on Train Data]
+[2026-08-12 12:29:46,233: INFO: data_transformation: Categorical cols identified: ['checking_account', 'credit_history', 'purpose', 'savings_account', 'employment', 'personal_status_sex', 'other_debtors', 'property', 'other_installment_plans', 'housing', 'job', 'telephone', 'foreign_worker']]
+[2026-08-12 12:29:46,240: INFO: data_transformation: Feature 'checking_account' IV: 0.6388 (Keep)]
+[2026-08-12 12:29:46,248: INFO: data_transformation: Feature 'credit_history' IV: 0.2544 (Keep)]
+[2026-08-12 12:29:46,255: INFO: data_transformation: Feature 'purpose' IV: 0.1322 (Keep)]
+[2026-08-12 12:29:46,263: INFO: data_transformation: Feature 'savings_account' IV: 0.2335 (Keep)]
+[2026-08-12 12:29:46,273: INFO: data_transformation: Feature 'employment' IV: 0.1403 (Keep)]
+[2026-08-12 12:29:46,287: INFO: data_transformation: Feature 'personal_status_sex' IV: 0.0392 (Keep)]
+[2026-08-12 12:29:46,293: INFO: data_transformation: Feature 'other_debtors' IV: 0.0267 (Keep)]
+[2026-08-12 12:29:46,299: INFO: data_transformation: Feature 'property' IV: 0.1402 (Keep)]
+[2026-08-12 12:29:46,312: INFO: data_transformation: Feature 'other_installment_plans' IV: 0.1169 (Keep)]
+[2026-08-12 12:29:46,318: INFO: data_transformation: Feature 'housing' IV: 0.1020 (Keep)]
+[2026-08-12 12:29:46,324: INFO: data_transformation: Feature 'job' IV: 0.0228 (Keep)]
+[2026-08-12 12:29:46,330: INFO: data_transformation: Feature 'telephone' IV: 0.0029 (Remove)]
+[2026-08-12 12:29:46,337: INFO: data_transformation: Feature 'foreign_worker' IV: 0.0767 (Keep)]
+[2026-08-12 12:29:46,354: INFO: data_transformation: Feature 'age_binned' IV: 0.0744 (Keep)]
+[2026-08-12 12:29:46,368: INFO: data_transformation: Feature 'duration_binned' IV: 0.1871 (Keep)]
+[2026-08-12 12:29:46,370: INFO: data_transformation: Applying WOE transformation]
+[2026-08-12 12:29:46,427: INFO: data_transformation: Saving transformed datasets and WOE rules to artifacts/data_transformation]
+[2026-08-12 12:29:46,468: INFO: data_transformation: Data Transformation completed successfully]
+[2026-08-12 12:29:46,469: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:29:49,157: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage started <<<<<<]
+[2026-08-12 12:29:49,164: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:29:49,165: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:29:49,165: INFO: common: created directory at: artifacts]
+[2026-08-12 12:29:49,165: INFO: common: created directory at: artifacts/model_trainer]
+[2026-08-12 12:29:49,165: INFO: model_trainer: Reading train data]
+[2026-08-12 12:29:49,220: INFO: model_trainer: Using WOE features for training: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:29:49,221: INFO: model_trainer: Training Logistic Regression with solver=liblinear, max_iter=1000]
+[2026-08-12 12:29:49,287: INFO: model_trainer: Saving model to artifacts/model_trainer\model.joblib]
+[2026-08-12 12:29:49,289: INFO: model_trainer: Model Trainer stage completed successfully]
+[2026-08-12 12:29:49,289: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:29:51,945: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage started <<<<<<]
+[2026-08-12 12:29:51,949: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:29:51,951: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:29:51,953: INFO: common: created directory at: artifacts]
+[2026-08-12 12:29:51,954: INFO: common: created directory at: artifacts/model_evaluation]
+[2026-08-12 12:29:51,954: INFO: model_evaluation: Reading test data]
+[2026-08-12 12:29:52,067: INFO: model_evaluation: Using WOE features for evaluation: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:29:52,068: INFO: model_evaluation: Predicting on test data]
+[2026-08-12 12:29:52,113: ERROR: model_evaluation: Error in Model Evaluation: Input X contains NaN.
+LogisticRegression does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values]
+[2026-08-12 12:29:52,113: ERROR: stage_04_model_evaluation: Input X contains NaN.
+LogisticRegression does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values]
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_04_model_evaluation.py", line 21, in <module>
+    obj.main()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_04_model_evaluation.py", line 15, in main
+    model_evaluation.save_results()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\model_evaluation.py", line 80, in save_results
+    raise e
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\model_evaluation.py", line 38, in save_results
+    y_pred = model.predict(X_test)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\linear_model\_base.py", line 414, in predict
+    scores = self.decision_function(X)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\linear_model\_base.py", line 389, in decision_function
+    X = validate_data(self, X, accept_sparse="csr", reset=False)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\utils\validation.py", line 3038, in validate_data
+    out = check_array(X, input_name="X", **check_params)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\utils\validation.py", line 1087, in check_array
+    _assert_all_finite(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\utils\validation.py", line 137, in _assert_all_finite
+    _assert_all_finite_element_wise(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\utils\validation.py", line 186, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input X contains NaN.
+LogisticRegression does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+[2026-08-12 12:30:52,222: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage started <<<<<<]
+[2026-08-12 12:30:52,224: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:30:52,227: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:30:52,228: INFO: common: created directory at: artifacts]
+[2026-08-12 12:30:52,228: INFO: common: created directory at: artifacts/data_transformation]
+[2026-08-12 12:30:52,228: INFO: data_transformation: Reading data from ingestion artifacts]
+[2026-08-12 12:30:52,236: INFO: data_transformation: df.dtypes:
+checking_account             str
+duration                   int64
+credit_history               str
+purpose                      str
+credit_amount              int64
+savings_account              str
+employment                   str
+installment_rate           int64
+personal_status_sex          str
+other_debtors                str
+residence_since            int64
+property                     str
+age                        int64
+other_installment_plans      str
+housing                      str
+existing_credits           int64
+job                          str
+dependents                 int64
+telephone                    str
+foreign_worker               str
+credit_risk                int64
+dtype: object]
+[2026-08-12 12:30:52,237: INFO: data_transformation: Splitting data into train, val, test]
+[2026-08-12 12:30:52,305: INFO: data_transformation: Train size: (700, 21), Val size: (150, 21), Test size: (150, 21)]
+[2026-08-12 12:30:52,305: INFO: data_transformation: Binning numerical variables]
+[2026-08-12 12:30:52,332: INFO: data_transformation: Calculating WOE & IV mapping on Train Data]
+[2026-08-12 12:30:52,334: INFO: data_transformation: Categorical cols identified: ['checking_account', 'credit_history', 'purpose', 'savings_account', 'employment', 'personal_status_sex', 'other_debtors', 'property', 'other_installment_plans', 'housing', 'job', 'telephone', 'foreign_worker']]
+[2026-08-12 12:30:52,343: INFO: data_transformation: Feature 'checking_account' IV: 0.6388 (Keep)]
+[2026-08-12 12:30:52,350: INFO: data_transformation: Feature 'credit_history' IV: 0.2544 (Keep)]
+[2026-08-12 12:30:52,360: INFO: data_transformation: Feature 'purpose' IV: 0.1322 (Keep)]
+[2026-08-12 12:30:52,368: INFO: data_transformation: Feature 'savings_account' IV: 0.2335 (Keep)]
+[2026-08-12 12:30:52,374: INFO: data_transformation: Feature 'employment' IV: 0.1403 (Keep)]
+[2026-08-12 12:30:52,381: INFO: data_transformation: Feature 'personal_status_sex' IV: 0.0392 (Keep)]
+[2026-08-12 12:30:52,396: INFO: data_transformation: Feature 'other_debtors' IV: 0.0267 (Keep)]
+[2026-08-12 12:30:52,406: INFO: data_transformation: Feature 'property' IV: 0.1402 (Keep)]
+[2026-08-12 12:30:52,415: INFO: data_transformation: Feature 'other_installment_plans' IV: 0.1169 (Keep)]
+[2026-08-12 12:30:52,420: INFO: data_transformation: Feature 'housing' IV: 0.1020 (Keep)]
+[2026-08-12 12:30:52,428: INFO: data_transformation: Feature 'job' IV: 0.0228 (Keep)]
+[2026-08-12 12:30:52,438: INFO: data_transformation: Feature 'telephone' IV: 0.0029 (Remove)]
+[2026-08-12 12:30:52,445: INFO: data_transformation: Feature 'foreign_worker' IV: 0.0767 (Keep)]
+[2026-08-12 12:30:52,454: INFO: data_transformation: Feature 'age_binned' IV: 0.0744 (Keep)]
+[2026-08-12 12:30:52,461: INFO: data_transformation: Feature 'duration_binned' IV: 0.1871 (Keep)]
+[2026-08-12 12:30:52,463: INFO: data_transformation: Applying WOE transformation]
+[2026-08-12 12:30:52,556: INFO: data_transformation: Saving transformed datasets and WOE rules to artifacts/data_transformation]
+[2026-08-12 12:30:52,593: INFO: data_transformation: Data Transformation completed successfully]
+[2026-08-12 12:30:52,595: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:30:55,614: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage started <<<<<<]
+[2026-08-12 12:30:55,616: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:30:55,618: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:30:55,619: INFO: common: created directory at: artifacts]
+[2026-08-12 12:30:55,619: INFO: common: created directory at: artifacts/model_evaluation]
+[2026-08-12 12:30:55,619: INFO: model_evaluation: Reading test data]
+[2026-08-12 12:30:55,733: INFO: model_evaluation: Using WOE features for evaluation: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:30:55,735: INFO: model_evaluation: Predicting on test data]
+[2026-08-12 12:30:55,791: INFO: model_evaluation: Calculating metrics]
+[2026-08-12 12:30:55,842: INFO: model_evaluation: Metrics evaluated: {'ROC_AUC': 0.8076190476190477, 'Gini': 0.6152380952380954, 'PR_AUC': 0.6181103664867527, 'Log_Loss': 0.48214961638297676, 'Brier_Score': 0.15848553188838843, 'Precision': 0.6896551724137931, 'Recall': 0.4444444444444444, 'F1_Score': 0.5405405405405406, 'Confusion_Matrix': {'TN': 96, 'FP': 9, 'FN': 25, 'TP': 20}}]
+[2026-08-12 12:30:55,843: INFO: common: json file saved at: artifacts\model_evaluation\metrics.json]
+[2026-08-12 12:30:55,844: INFO: model_evaluation: Model evaluation completed successfully]
+[2026-08-12 12:30:55,844: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage completed <<<<<<
+
+x==========x]

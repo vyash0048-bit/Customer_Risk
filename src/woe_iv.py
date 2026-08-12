@@ -53,6 +53,6 @@ def transform_to_woe(dataframe, feature, binning_rules):
     df = dataframe.copy()
     
     woe_map = dict(zip(binning_rules['bin'], binning_rules['WOE']))
-    df[f"{feature}_WOE"] = df[feature].map(woe_map)
+    df[f"{feature}_WOE"] = df[feature].map(woe_map).fillna(0.0)
     
     return df
