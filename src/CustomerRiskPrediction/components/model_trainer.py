@@ -90,40 +90,63 @@ class ModelTrainer:
             logger.info(f"Saving Logistic Regression model to {model_path}")
             joblib.dump(lr, model_path)
             
-            # --- Train Challenger Model (XGBoost) ---
-            logger.info("Training Challenger Model (XGBoost)...")
-            import xgboost as xgb
+            # --- Train Advanced Challenger Model (CatBoost with Optuna) ---
+            logger.info("Training Advanced Challenger Model (CatBoost) on raw features...")
+            import catboost as cb
+            import optuna
+
+            # Use the raw features for CatBoost instead of WOE features
+            raw_features = [col for col in train_data.columns if not col.endswith('_WOE') and col != target_column]
+            X_train_raw = train_data[raw_features].copy()
             
-            xgb_model = xgb.XGBClassifier(
-                use_label_encoder=False,
-                eval_metric='logloss',
-                random_state=42
-            )
+            # Fill missing values for CatBoost
+            for col in X_train_raw.columns:
+                if X_train_raw[col].dtype.name in ['object', 'category']:
+                    X_train_raw[col] = X_train_raw[col].fillna("Unknown").astype(str)
+                else:
+                    X_train_raw[col] = X_train_raw[col].fillna(0)
+
+            cat_features = [col for col in X_train_raw.columns if X_train_raw[col].dtype.name in ['object', 'category', 'str']]
+
+            def objective(trial):
+                params = {
+                    'loss_function': 'Logloss',
+                    'iterations': trial.suggest_int('iterations', 50, 200),
+                    'depth': trial.suggest_int('depth', 4, 8),
+                    'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.2, log=True),
+                    'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 1, 10),
+                    'auto_class_weights': trial.suggest_categorical('auto_class_weights', ['Balanced', 'None']),
+                    'verbose': 0,
+                    'cat_features': cat_features
+                }
+                
+                # Cross-validation
+                cv_data = cb.cv(
+                    cb.Pool(X_train_raw, y_train, cat_features=cat_features),
+                    params,
+                    fold_count=3,
+                    return_models=False,
+                    verbose=0
+                )
+                
+                return cv_data['test-Logloss-mean'].iloc[-1]
+
+            optuna.logging.set_verbosity(optuna.logging.WARNING)
+            study = optuna.create_study(direction='minimize')
+            study.optimize(objective, n_trials=10)
+
+            logger.info(f"CatBoost Best Optuna params: {study.best_params}")
+
+            best_cb_params = study.best_params
+            best_cb_params['cat_features'] = cat_features
+            best_cb_params['verbose'] = 0
             
-            # Simple grid search for XGBoost
-            xgb_param_grid = {
-                'n_estimators': [50, 100],
-                'max_depth': [3, 5],
-                'learning_rate': [0.01, 0.1]
-            }
-            
-            xgb_grid = GridSearchCV(
-                estimator=xgb_model,
-                param_grid=xgb_param_grid,
-                scoring='roc_auc',
-                cv=5,
-                verbose=1,
-                n_jobs=1
-            )
-            
-            xgb_grid.fit(X_train_resampled, y_train_resampled)
-            logger.info(f"XGBoost Best params: {xgb_grid.best_params_}")
-            logger.info(f"XGBoost CV ROC-AUC: {xgb_grid.best_score_:.4f}")
-            
-            xgb_best = xgb_grid.best_estimator_
-            xgb_model_path = os.path.join(self.config.root_dir, "xgb_model.joblib")
-            logger.info(f"Saving XGBoost model to {xgb_model_path}")
-            joblib.dump(xgb_best, xgb_model_path)
+            cb_model = cb.CatBoostClassifier(**best_cb_params)
+            cb_model.fit(X_train_raw, y_train)
+
+            cb_model_path = os.path.join(self.config.root_dir, "cb_model.joblib")
+            logger.info(f"Saving CatBoost model to {cb_model_path}")
+            joblib.dump(cb_model, cb_model_path)
 
             logger.info("Model Trainer stage completed successfully")
 

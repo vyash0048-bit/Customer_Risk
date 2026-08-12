@@ -27,9 +27,9 @@ class ModelEvaluation:
             test_data = pd.read_csv(self.config.test_data_path)
             model_lr = joblib.load(self.config.model_path)
             
-            # Paths for xgb
-            xgb_model_path = self.config.model_path.replace("model.joblib", "xgb_model.joblib")
-            model_xgb = joblib.load(xgb_model_path)
+            # Paths for CatBoost
+            cb_model_path = self.config.model_path.replace("model.joblib", "cb_model.joblib")
+            model_cb = joblib.load(cb_model_path)
 
             target_column = self.config.target_column
             
@@ -39,12 +39,12 @@ class ModelEvaluation:
                 woe_columns = [col for col in test_data.columns if col.endswith('_WOE')]
             
             logger.info(f"Using WOE features for evaluation: {woe_columns}")
-            X_test = test_data[woe_columns]
+            X_test_lr = test_data[woe_columns]
             y_test = test_data[target_column]
 
             logger.info("Predicting on test data with Logistic Regression")
-            y_pred_lr = model_lr.predict(X_test)
-            y_pred_proba_lr = model_lr.predict_proba(X_test)[:, 1]
+            y_pred_lr = model_lr.predict(X_test_lr)
+            y_pred_proba_lr = model_lr.predict_proba(X_test_lr)[:, 1]
 
             logger.info("Calculating LR metrics")
             metrics_lr = {
@@ -66,31 +66,44 @@ class ModelEvaluation:
             logger.info(f"LR Metrics evaluated: {metrics_lr}")
             save_json(path=Path(self.config.metric_file_name), data=metrics_lr)
             
-            # --- XGBoost Evaluation ---
-            logger.info("Predicting on test data with XGBoost")
-            y_pred_xgb = model_xgb.predict(X_test)
-            y_pred_proba_xgb = model_xgb.predict_proba(X_test)[:, 1]
-
-            logger.info("Calculating XGBoost metrics")
-            metrics_xgb = {
-                "ROC_AUC": float(roc_auc_score(y_test, y_pred_proba_xgb)),
-                "Gini": float(2 * roc_auc_score(y_test, y_pred_proba_xgb) - 1),
-                "PR_AUC": float(average_precision_score(y_test, y_pred_proba_xgb)),
-                "Log_Loss": float(log_loss(y_test, y_pred_proba_xgb)),
-                "Brier_Score": float(brier_score_loss(y_test, y_pred_proba_xgb)),
-                "Precision": float(precision_score(y_test, y_pred_xgb, zero_division=0)),
-                "Recall": float(recall_score(y_test, y_pred_xgb, zero_division=0)),
-                "F1_Score": float(f1_score(y_test, y_pred_xgb, zero_division=0)),
+            # --- Evaluate CatBoost Model ---
+            logger.info("Predicting on test data with CatBoost (Raw Features)")
+            
+            # Extract raw features from test data
+            raw_features = [col for col in test_data.columns if not col.endswith('_WOE') and col != target_column]
+            X_test_raw = test_data[raw_features].copy()
+            
+            # Fill missing values for CatBoost
+            for col in X_test_raw.columns:
+                if X_test_raw[col].dtype.name in ['object', 'category']:
+                    X_test_raw[col] = X_test_raw[col].fillna("Unknown").astype(str)
+                else:
+                    X_test_raw[col] = X_test_raw[col].fillna(0)
+                    
+            logger.info("Calculating CatBoost metrics")
+            y_pred_proba_cb = model_cb.predict_proba(X_test_raw)[:, 1]
+            y_pred_cb = model_cb.predict(X_test_raw)
+            y_pred_cb = [int(p) for p in y_pred_cb]
+            
+            metrics_cb = {
+                "ROC_AUC": float(roc_auc_score(y_test, y_pred_proba_cb)),
+                "Gini": float(2 * roc_auc_score(y_test, y_pred_proba_cb) - 1),
+                "PR_AUC": float(average_precision_score(y_test, y_pred_proba_cb)),
+                "Log_Loss": float(log_loss(y_test, y_pred_proba_cb)),
+                "Brier_Score": float(brier_score_loss(y_test, y_pred_proba_cb)),
+                "Precision": float(precision_score(y_test, y_pred_cb, zero_division=0)),
+                "Recall": float(recall_score(y_test, y_pred_cb, zero_division=0)),
+                "F1_Score": float(f1_score(y_test, y_pred_cb, zero_division=0)),
                 "Confusion_Matrix": {
-                    "TN": int(confusion_matrix(y_test, y_pred_xgb)[0, 0]),
-                    "FP": int(confusion_matrix(y_test, y_pred_xgb)[0, 1]),
-                    "FN": int(confusion_matrix(y_test, y_pred_xgb)[1, 0]),
-                    "TP": int(confusion_matrix(y_test, y_pred_xgb)[1, 1])
+                    "TN": int(confusion_matrix(y_test, y_pred_cb)[0, 0]),
+                    "FP": int(confusion_matrix(y_test, y_pred_cb)[0, 1]),
+                    "FN": int(confusion_matrix(y_test, y_pred_cb)[1, 0]),
+                    "TP": int(confusion_matrix(y_test, y_pred_cb)[1, 1])
                 }
             }
-            logger.info(f"XGBoost Metrics evaluated: {metrics_xgb}")
-            xgb_metric_path = str(self.config.metric_file_name).replace("metrics.json", "xgb_metrics.json")
-            save_json(path=Path(xgb_metric_path), data=metrics_xgb)
+            logger.info(f"CatBoost Metrics evaluated: {metrics_cb}")
+            cb_metric_path = str(self.config.metric_file_name).replace("metrics.json", "cb_metrics.json")
+            save_json(path=Path(cb_metric_path), data=metrics_cb)
 
             logger.info("Model evaluation completed successfully")
 

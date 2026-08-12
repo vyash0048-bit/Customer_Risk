@@ -1289,3 +1289,91 @@ x==========x]
 [2026-08-12 12:47:55,243: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage completed <<<<<<
 
 x==========x]
+[2026-08-12 12:53:06,007: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage started <<<<<<]
+[2026-08-12 12:53:06,013: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:53:06,017: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:53:06,019: INFO: common: created directory at: artifacts]
+[2026-08-12 12:53:06,020: INFO: common: created directory at: artifacts/model_trainer]
+[2026-08-12 12:53:06,021: INFO: model_trainer: Reading train data]
+[2026-08-12 12:53:06,064: INFO: model_trainer: Using WOE features for training: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:53:06,077: INFO: model_trainer: Performing Feature Selection (Multicollinearity - VIF)]
+[2026-08-12 12:53:06,149: INFO: model_trainer: All remaining features have VIF <= 5.0]
+[2026-08-12 12:53:06,149: INFO: model_trainer: Final selected features (14): ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:53:06,149: INFO: model_trainer: Applying SMOTE for handling class imbalance...]
+[2026-08-12 12:53:06,934: INFO: model_trainer: Resampled train data shape: (980, 14)]
+[2026-08-12 12:53:06,935: INFO: model_trainer: Performing GridSearchCV for Logistic Regression...]
+[2026-08-12 12:53:09,966: INFO: model_trainer: Best parameters found: {'C': 0.1, 'class_weight': 'balanced', 'penalty': 'l2'}]
+[2026-08-12 12:53:09,967: INFO: model_trainer: Best cross-validation ROC-AUC: 0.8192]
+[2026-08-12 12:53:09,967: INFO: model_trainer: Saving Logistic Regression model to artifacts/model_trainer\model.joblib]
+[2026-08-12 12:53:09,984: INFO: model_trainer: Training Advanced Challenger Model (CatBoost) on raw features...]
+[2026-08-12 12:53:11,693: ERROR: model_trainer: Error in Model Trainer: Parameter loss_function should be specified for cross-validation]
+[2026-08-12 12:53:11,693: ERROR: stage_03_model_trainer: Parameter loss_function should be specified for cross-validation]
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_03_model_trainer.py", line 21, in <module>
+    obj.main()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_03_model_trainer.py", line 15, in main
+    model_trainer.train()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\model_trainer.py", line 154, in train
+    raise e
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\model_trainer.py", line 135, in train
+    study.optimize(objective, n_trials=10)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\optuna\study\study.py", line 516, in optimize
+    _optimize(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\optuna\study\_optimize.py", line 68, in _optimize
+    _optimize_sequential(
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\optuna\study\_optimize.py", line 165, in _optimize_sequential
+    frozen_trial_id = _run_trial(study, func, catch)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\optuna\study\_optimize.py", line 263, in _run_trial
+    raise func_err
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\optuna\study\_optimize.py", line 206, in _run_trial
+    value_or_values = func(trial)
+                      ^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\model_trainer.py", line 123, in objective
+    cv_data = cb.cv(
+              ^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\catboost\core.py", line 7162, in cv
+    raise CatBoostError("Parameter loss_function should be specified for cross-validation")
+_catboost.CatBoostError: Parameter loss_function should be specified for cross-validation
+[2026-08-12 12:53:38,532: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage started <<<<<<]
+[2026-08-12 12:53:38,536: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:53:38,538: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:53:38,539: INFO: common: created directory at: artifacts]
+[2026-08-12 12:53:38,539: INFO: common: created directory at: artifacts/model_trainer]
+[2026-08-12 12:53:38,539: INFO: model_trainer: Reading train data]
+[2026-08-12 12:53:38,562: INFO: model_trainer: Using WOE features for training: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:53:38,566: INFO: model_trainer: Performing Feature Selection (Multicollinearity - VIF)]
+[2026-08-12 12:53:38,609: INFO: model_trainer: All remaining features have VIF <= 5.0]
+[2026-08-12 12:53:38,610: INFO: model_trainer: Final selected features (14): ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:53:38,610: INFO: model_trainer: Applying SMOTE for handling class imbalance...]
+[2026-08-12 12:53:39,397: INFO: model_trainer: Resampled train data shape: (980, 14)]
+[2026-08-12 12:53:39,397: INFO: model_trainer: Performing GridSearchCV for Logistic Regression...]
+[2026-08-12 12:53:42,148: INFO: model_trainer: Best parameters found: {'C': 0.1, 'class_weight': 'balanced', 'penalty': 'l2'}]
+[2026-08-12 12:53:42,150: INFO: model_trainer: Best cross-validation ROC-AUC: 0.8192]
+[2026-08-12 12:53:42,150: INFO: model_trainer: Saving Logistic Regression model to artifacts/model_trainer\model.joblib]
+[2026-08-12 12:53:42,154: INFO: model_trainer: Training Advanced Challenger Model (CatBoost) on raw features...]
+[2026-08-12 12:57:17,507: INFO: model_trainer: CatBoost Best Optuna params: {'iterations': 193, 'depth': 6, 'learning_rate': 0.02951127324500817, 'l2_leaf_reg': 8.128734552154521, 'auto_class_weights': 'None'}]
+[2026-08-12 12:57:28,191: INFO: model_trainer: Saving CatBoost model to artifacts/model_trainer\cb_model.joblib]
+[2026-08-12 12:57:28,198: INFO: model_trainer: Model Trainer stage completed successfully]
+[2026-08-12 12:57:28,198: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:57:32,778: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage started <<<<<<]
+[2026-08-12 12:57:32,782: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:57:32,784: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:57:32,785: INFO: common: created directory at: artifacts]
+[2026-08-12 12:57:32,785: INFO: common: created directory at: artifacts/model_evaluation]
+[2026-08-12 12:57:32,785: INFO: model_evaluation: Reading test data]
+[2026-08-12 12:57:32,927: INFO: model_evaluation: Using WOE features for evaluation: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:57:32,929: INFO: model_evaluation: Predicting on test data with Logistic Regression]
+[2026-08-12 12:57:32,996: INFO: model_evaluation: Calculating LR metrics]
+[2026-08-12 12:57:33,064: INFO: model_evaluation: LR Metrics evaluated: {'ROC_AUC': 0.8065608465608466, 'Gini': 0.6131216931216932, 'PR_AUC': 0.6354991227764584, 'Log_Loss': 0.5226264802123848, 'Brier_Score': 0.17458289387164047, 'Precision': 0.5344827586206896, 'Recall': 0.6888888888888889, 'F1_Score': 0.6019417475728155, 'Confusion_Matrix': {'TN': 78, 'FP': 27, 'FN': 14, 'TP': 31}}]
+[2026-08-12 12:57:33,065: INFO: common: json file saved at: artifacts\model_evaluation\metrics.json]
+[2026-08-12 12:57:33,065: INFO: model_evaluation: Predicting on test data with CatBoost (Raw Features)]
+[2026-08-12 12:57:33,074: INFO: model_evaluation: Calculating CatBoost metrics]
+[2026-08-12 12:57:33,150: INFO: model_evaluation: CatBoost Metrics evaluated: {'ROC_AUC': 0.7648677248677249, 'Gini': 0.5297354497354498, 'PR_AUC': 0.5999946115569462, 'Log_Loss': 0.5122936678465426, 'Brier_Score': 0.1696067718016211, 'Precision': 0.6551724137931034, 'Recall': 0.4222222222222222, 'F1_Score': 0.5135135135135135, 'Confusion_Matrix': {'TN': 95, 'FP': 10, 'FN': 26, 'TP': 19}}]
+[2026-08-12 12:57:33,152: INFO: common: json file saved at: artifacts\model_evaluation\cb_metrics.json]
+[2026-08-12 12:57:33,152: INFO: model_evaluation: Model evaluation completed successfully]
+[2026-08-12 12:57:33,153: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage completed <<<<<<
+
+x==========x]
