@@ -42,9 +42,17 @@ class ModelEvaluation:
             X_test_lr = test_data[woe_columns]
             y_test = test_data[target_column]
 
+            # Load threshold
+            threshold_path = os.path.join(os.path.dirname(self.config.model_path), "lr_threshold.json")
+            lr_threshold = 0.5
+            if os.path.exists(threshold_path):
+                with open(threshold_path, 'r') as f:
+                    lr_threshold = json.load(f).get('lr_threshold', 0.5)
+            logger.info(f"Using Logistic Regression threshold: {lr_threshold:.4f}")
+
             logger.info("Predicting on test data with Logistic Regression")
-            y_pred_lr = model_lr.predict(X_test_lr)
             y_pred_proba_lr = model_lr.predict_proba(X_test_lr)[:, 1]
+            y_pred_lr = (y_pred_proba_lr >= lr_threshold).astype(int)
 
             logger.info("Calculating LR metrics")
             metrics_lr = {

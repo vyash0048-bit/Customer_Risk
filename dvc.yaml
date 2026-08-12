@@ -36,6 +36,7 @@ stages:
     outs:
       - artifacts/model_trainer/model.joblib
       - artifacts/model_trainer/cb_model.joblib
+      - artifacts/model_trainer/lr_threshold.json
 
   model_evaluation:
     cmd: python src/CustomerRiskPrediction/pipeline/stage_04_model_evaluation.py
@@ -46,6 +47,7 @@ stages:
       - artifacts/data_transformation/test.csv
       - artifacts/model_trainer/model.joblib
       - artifacts/model_trainer/cb_model.joblib
+      - artifacts/model_trainer/lr_threshold.json
     outs:
       - artifacts/model_evaluation/metrics.json
       - artifacts/model_evaluation/cb_metrics.json

@@ -103,6 +103,24 @@ class ModelTrainer:
             logger.info(f"Saving Logistic Regression model to {model_path}")
             joblib.dump(lr, model_path)
             
+            # Calculate optimal probability threshold on resampled train data
+            from sklearn.metrics import f1_score
+            y_train_probs = lr.predict_proba(X_train_resampled)[:, 1]
+            best_threshold = 0.5
+            best_f1 = 0
+            for t in np.linspace(0.1, 0.9, 81):
+                preds = (y_train_probs >= t).astype(int)
+                f1 = f1_score(y_train_resampled, preds)
+                if f1 > best_f1:
+                    best_f1 = f1
+                    best_threshold = t
+            
+            logger.info(f"Optimal probability threshold for Logistic Regression (max F1): {best_threshold:.4f}")
+            threshold_path = os.path.join(self.config.root_dir, "lr_threshold.json")
+            import json
+            with open(threshold_path, 'w') as f:
+                json.dump({'lr_threshold': float(best_threshold)}, f)
+            
             # --- Train Advanced Challenger Model (CatBoost with Optuna) ---
             logger.info("Training Advanced Challenger Model (CatBoost) on raw features...")
             import catboost as cb
