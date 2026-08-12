@@ -56,37 +56,50 @@ class ModelTrainer:
             X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
             logger.info(f"Resampled train data shape: {X_train_resampled.shape}")
 
-            logger.info(f"Performing GridSearchCV for Logistic Regression...")
-            param_grid = {
-                'C': [0.01, 0.1, 1, 10, 100],
-                'penalty': ['l1', 'l2'],
-                'class_weight': ['balanced', None]
-            }
+            logger.info(f"Performing Optuna Bayesian Optimization for Logistic Regression (ElasticNet)...")
             
-            base_lr = LogisticRegression(
-                solver=self.config.solver,
-                max_iter=self.config.max_iter,
-                random_state=self.config.random_state
-            )
+            import optuna
+            from sklearn.model_selection import cross_val_score
             
-            grid_search = GridSearchCV(
-                estimator=base_lr,
-                param_grid=param_grid,
-                scoring='roc_auc',
-                cv=5,
-                verbose=1,
-                n_jobs=1
-            )
-            
-            grid_search.fit(X_train_resampled, y_train_resampled)
-            
-            logger.info(f"Best parameters found: {grid_search.best_params_}")
-            logger.info(f"Best cross-validation ROC-AUC: {grid_search.best_score_:.4f}")
-            
-            # The best estimator is refitted automatically
-            lr = grid_search.best_estimator_
+            def lr_objective(trial):
+                # Search space for Logistic Regression
+                c = trial.suggest_float('C', 1e-4, 1e2, log=True)
+                l1_ratio = trial.suggest_float('l1_ratio', 0.0, 1.0)
+                class_weight = trial.suggest_categorical('class_weight', ['balanced', None])
+                
+                model = LogisticRegression(
+                    solver='saga',
+                    penalty='elasticnet',
+                    C=c,
+                    l1_ratio=l1_ratio,
+                    class_weight=class_weight,
+                    max_iter=1000,
+                    random_state=42,
+                    n_jobs=1
+                )
+                
+                score = cross_val_score(model, X_train_resampled, y_train_resampled, cv=5, scoring='roc_auc', n_jobs=1).mean()
+                return score
 
-            model_path = os.path.join(self.config.root_dir, self.config.model_name)
+            optuna.logging.set_verbosity(optuna.logging.WARNING)
+            lr_study = optuna.create_study(direction='maximize')
+            lr_study.optimize(lr_objective, n_trials=50)
+            
+            logger.info(f"Best LR parameters found: {lr_study.best_params}")
+            logger.info(f"Best LR cross-validation ROC-AUC: {lr_study.best_value:.4f}")
+            
+            lr = LogisticRegression(
+                solver='saga',
+                penalty='elasticnet',
+                C=lr_study.best_params['C'],
+                l1_ratio=lr_study.best_params['l1_ratio'],
+                class_weight=lr_study.best_params['class_weight'],
+                max_iter=1000,
+                random_state=42
+            )
+            lr.fit(X_train_resampled, y_train_resampled)
+            
+            model_path = os.path.join(self.config.root_dir, "model.joblib")
             logger.info(f"Saving Logistic Regression model to {model_path}")
             joblib.dump(lr, model_path)
             
