@@ -121,6 +121,56 @@ class ModelTrainer:
             with open(threshold_path, 'w') as f:
                 json.dump({'lr_threshold': float(best_threshold)}, f)
             
+            # --- Train Advanced XGBoost on WOE Features and Stack it ---
+            logger.info("Training XGBoost on WOE features for Stacking...")
+            import xgboost as xgb
+            from sklearn.ensemble import StackingClassifier
+
+            # Define a base XGBoost model
+            xgb_model = xgb.XGBClassifier(
+                n_estimators=100,
+                max_depth=3,
+                learning_rate=0.05,
+                subsample=0.8,
+                colsample_bytree=0.8,
+                random_state=42,
+                eval_metric='logloss',
+                n_jobs=1
+            )
+            
+            # Create a Stacking Classifier
+            stacking_clf = StackingClassifier(
+                estimators=[
+                    ('lr', lr),
+                    ('xgb', xgb_model)
+                ],
+                final_estimator=LogisticRegression(random_state=42, C=0.1),
+                cv=5,
+                n_jobs=1
+            )
+            
+            stacking_clf.fit(X_train_resampled, y_train_resampled)
+            
+            stack_model_path = os.path.join(self.config.root_dir, "stack_model.joblib")
+            logger.info(f"Saving Stacking model to {stack_model_path}")
+            joblib.dump(stacking_clf, stack_model_path)
+            
+            # Calculate optimal probability threshold for Stacking Model
+            y_train_probs_stack = stacking_clf.predict_proba(X_train_resampled)[:, 1]
+            best_threshold_stack = 0.5
+            best_f1_stack = 0
+            for t in np.linspace(0.1, 0.9, 81):
+                preds = (y_train_probs_stack >= t).astype(int)
+                f1 = f1_score(y_train_resampled, preds)
+                if f1 > best_f1_stack:
+                    best_f1_stack = f1
+                    best_threshold_stack = t
+            
+            logger.info(f"Optimal probability threshold for Stacking Model (max F1): {best_threshold_stack:.4f}")
+            stack_threshold_path = os.path.join(self.config.root_dir, "stack_threshold.json")
+            with open(stack_threshold_path, 'w') as f:
+                json.dump({'stack_threshold': float(best_threshold_stack)}, f)
+            
             # --- Train Advanced Challenger Model (CatBoost with Optuna) ---
             logger.info("Training Advanced Challenger Model (CatBoost) on raw features...")
             import catboost as cb

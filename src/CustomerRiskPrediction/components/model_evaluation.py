@@ -74,6 +74,44 @@ class ModelEvaluation:
             logger.info(f"LR Metrics evaluated: {metrics_lr}")
             save_json(path=Path(self.config.metric_file_name), data=metrics_lr)
             
+            # --- Evaluate Stacking Model ---
+            stack_model_path = self.config.model_path.replace("model.joblib", "stack_model.joblib")
+            if os.path.exists(stack_model_path):
+                model_stack = joblib.load(stack_model_path)
+                logger.info("Predicting on test data with Stacking Model")
+                
+                # Load threshold for Stacking Model
+                stack_threshold_path = os.path.join(os.path.dirname(self.config.model_path), "stack_threshold.json")
+                stack_threshold = 0.5
+                if os.path.exists(stack_threshold_path):
+                    with open(stack_threshold_path, 'r') as f:
+                        stack_threshold = json.load(f).get('stack_threshold', 0.5)
+                logger.info(f"Using Stacking threshold: {stack_threshold:.4f}")
+                
+                y_pred_proba_stack = model_stack.predict_proba(X_test_lr)[:, 1]
+                y_pred_stack = (y_pred_proba_stack >= stack_threshold).astype(int)
+                
+                logger.info("Calculating Stacking metrics")
+                metrics_stack = {
+                    "ROC_AUC": float(roc_auc_score(y_test, y_pred_proba_stack)),
+                    "Gini": float(2 * roc_auc_score(y_test, y_pred_proba_stack) - 1),
+                    "PR_AUC": float(average_precision_score(y_test, y_pred_proba_stack)),
+                    "Log_Loss": float(log_loss(y_test, y_pred_proba_stack)),
+                    "Brier_Score": float(brier_score_loss(y_test, y_pred_proba_stack)),
+                    "Precision": float(precision_score(y_test, y_pred_stack, zero_division=0)),
+                    "Recall": float(recall_score(y_test, y_pred_stack, zero_division=0)),
+                    "F1_Score": float(f1_score(y_test, y_pred_stack, zero_division=0)),
+                    "Confusion_Matrix": {
+                        "TN": int(confusion_matrix(y_test, y_pred_stack)[0, 0]),
+                        "FP": int(confusion_matrix(y_test, y_pred_stack)[0, 1]),
+                        "FN": int(confusion_matrix(y_test, y_pred_stack)[1, 0]),
+                        "TP": int(confusion_matrix(y_test, y_pred_stack)[1, 1])
+                    }
+                }
+                logger.info(f"Stacking Metrics evaluated: {metrics_stack}")
+                stack_metric_path = str(self.config.metric_file_name).replace("metrics.json", "stack_metrics.json")
+                save_json(path=Path(stack_metric_path), data=metrics_stack)
+            
             # --- Evaluate CatBoost Model ---
             logger.info("Predicting on test data with CatBoost (Raw Features)")
             

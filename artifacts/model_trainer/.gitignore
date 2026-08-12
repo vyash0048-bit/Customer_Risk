@@ -2,3 +2,5 @@
 /xgb_model.joblib
 /cb_model.joblib
 /lr_threshold.json
+/stack_model.joblib
+/stack_threshold.json
