@@ -1149,3 +1149,100 @@ x==========x]
 [2026-08-12 12:38:15,489: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage completed <<<<<<
 
 x==========x]
+[2026-08-12 12:42:34,728: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage started <<<<<<]
+[2026-08-12 12:42:34,734: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:42:34,737: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:42:34,738: INFO: common: created directory at: artifacts]
+[2026-08-12 12:42:34,739: INFO: common: created directory at: artifacts/model_trainer]
+[2026-08-12 12:42:34,739: INFO: model_trainer: Reading train data]
+[2026-08-12 12:42:34,772: INFO: model_trainer: Using WOE features for training: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:42:34,787: INFO: model_trainer: Performing Feature Selection (Multicollinearity - VIF)]
+[2026-08-12 12:42:34,987: INFO: model_trainer: All remaining features have VIF <= 5.0]
+[2026-08-12 12:42:34,988: INFO: model_trainer: Final selected features (14): ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:42:34,989: INFO: model_trainer: Performing GridSearchCV for Logistic Regression...]
+[2026-08-12 12:42:35,642: ERROR: model_trainer: Error in Model Trainer: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+
+Detailed tracebacks of the workers should have been printed to stderr in the executor process if faulthandler was not disabled.]
+[2026-08-12 12:42:35,643: ERROR: stage_03_model_trainer: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+
+Detailed tracebacks of the workers should have been printed to stderr in the executor process if faulthandler was not disabled.]
+Traceback (most recent call last):
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_03_model_trainer.py", line 21, in <module>
+    obj.main()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\pipeline\stage_03_model_trainer.py", line 15, in main
+    model_trainer.train()
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\model_trainer.py", line 125, in train
+    raise e
+  File "C:\Projects\Customer_Risk\src\CustomerRiskPrediction\components\model_trainer.py", line 74, in train
+    grid_search.fit(X_train, y_train)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\model_selection\_search.py", line 1131, in fit
+    self._run_search(evaluate_candidates, callback_ctx=root_callback_ctx)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\model_selection\_search.py", line 1718, in _run_search
+    evaluate_candidates(ParameterGrid(self.param_grid), callback_ctx=search_ctx)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\model_selection\_search.py", line 1080, in evaluate_candidates
+    out = parallel(
+          ^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\sklearn\utils\parallel.py", line 91, in __call__
+    return super().__call__(iterable_with_config_and_warning_filters)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\joblib\parallel.py", line 2072, in __call__
+    return output if self.return_generator else list(output)
+                                                ^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\joblib\parallel.py", line 1682, in _get_outputs
+    yield from self._retrieve()
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\joblib\parallel.py", line 1784, in _retrieve
+    self._raise_error_fast()
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\joblib\parallel.py", line 1859, in _raise_error_fast
+    error_job.get_result(self.timeout)
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\joblib\parallel.py", line 758, in get_result
+    return self._return_or_raise()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Customer_Risk\.venv\Lib\site-packages\joblib\parallel.py", line 773, in _return_or_raise
+    raise self._result
+joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+
+Detailed tracebacks of the workers should have been printed to stderr in the executor process if faulthandler was not disabled.
+[2026-08-12 12:43:12,134: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage started <<<<<<]
+[2026-08-12 12:43:12,137: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:43:12,139: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:43:12,140: INFO: common: created directory at: artifacts]
+[2026-08-12 12:43:12,142: INFO: common: created directory at: artifacts/model_trainer]
+[2026-08-12 12:43:12,142: INFO: model_trainer: Reading train data]
+[2026-08-12 12:43:12,181: INFO: model_trainer: Using WOE features for training: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:43:12,196: INFO: model_trainer: Performing Feature Selection (Multicollinearity - VIF)]
+[2026-08-12 12:43:12,267: INFO: model_trainer: All remaining features have VIF <= 5.0]
+[2026-08-12 12:43:12,268: INFO: model_trainer: Final selected features (14): ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:43:12,268: INFO: model_trainer: Performing GridSearchCV for Logistic Regression...]
+[2026-08-12 12:43:13,663: INFO: model_trainer: Best parameters found: {'C': 0.1, 'penalty': 'l2'}]
+[2026-08-12 12:43:13,663: INFO: model_trainer: Best cross-validation ROC-AUC: 0.7978]
+[2026-08-12 12:43:13,663: INFO: model_trainer: Saving Logistic Regression model to artifacts/model_trainer\model.joblib]
+[2026-08-12 12:43:13,692: INFO: model_trainer: Training Challenger Model (XGBoost)...]
+[2026-08-12 12:43:22,364: INFO: model_trainer: XGBoost Best params: {'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 50}]
+[2026-08-12 12:43:22,364: INFO: model_trainer: XGBoost CV ROC-AUC: 0.7678]
+[2026-08-12 12:43:22,364: INFO: model_trainer: Saving XGBoost model to artifacts/model_trainer\xgb_model.joblib]
+[2026-08-12 12:43:22,370: INFO: model_trainer: Model Trainer stage completed successfully]
+[2026-08-12 12:43:22,372: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:43:48,909: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage started <<<<<<]
+[2026-08-12 12:43:48,913: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:43:48,916: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:43:48,917: INFO: common: created directory at: artifacts]
+[2026-08-12 12:43:48,918: INFO: common: created directory at: artifacts/model_evaluation]
+[2026-08-12 12:43:48,919: INFO: model_evaluation: Reading test data]
+[2026-08-12 12:43:49,545: INFO: model_evaluation: Using WOE features for evaluation: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:43:49,561: INFO: model_evaluation: Predicting on test data with Logistic Regression]
+[2026-08-12 12:43:49,674: INFO: model_evaluation: Calculating LR metrics]
+[2026-08-12 12:43:49,858: INFO: model_evaluation: LR Metrics evaluated: {'ROC_AUC': 0.8004232804232804, 'Gini': 0.6008465608465607, 'PR_AUC': 0.6151374688963107, 'Log_Loss': 0.48888523411225454, 'Brier_Score': 0.1609160924657815, 'Precision': 0.7142857142857143, 'Recall': 0.4444444444444444, 'F1_Score': 0.547945205479452, 'Confusion_Matrix': {'TN': 97, 'FP': 8, 'FN': 25, 'TP': 20}}]
+[2026-08-12 12:43:49,861: INFO: common: json file saved at: artifacts\model_evaluation\metrics.json]
+[2026-08-12 12:43:49,861: INFO: model_evaluation: Predicting on test data with XGBoost]
+[2026-08-12 12:43:49,917: INFO: model_evaluation: Calculating XGBoost metrics]
+[2026-08-12 12:43:49,999: INFO: model_evaluation: XGBoost Metrics evaluated: {'ROC_AUC': 0.795978835978836, 'Gini': 0.591957671957672, 'PR_AUC': 0.640915214885377, 'Log_Loss': 0.49011367559432983, 'Brier_Score': 0.1627953201532364, 'Precision': 0.6551724137931034, 'Recall': 0.4222222222222222, 'F1_Score': 0.5135135135135135, 'Confusion_Matrix': {'TN': 95, 'FP': 10, 'FN': 26, 'TP': 19}}]
+[2026-08-12 12:43:50,002: INFO: common: json file saved at: artifacts\model_evaluation\xgb_metrics.json]
+[2026-08-12 12:43:50,002: INFO: model_evaluation: Model evaluation completed successfully]
+[2026-08-12 12:43:50,027: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage completed <<<<<<
+
+x==========x]

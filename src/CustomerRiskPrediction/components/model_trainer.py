@@ -68,7 +68,7 @@ class ModelTrainer:
                 scoring='roc_auc',
                 cv=5,
                 verbose=1,
-                n_jobs=-1
+                n_jobs=1
             )
             
             grid_search.fit(X_train, y_train)
@@ -80,8 +80,43 @@ class ModelTrainer:
             lr = grid_search.best_estimator_
 
             model_path = os.path.join(self.config.root_dir, self.config.model_name)
-            logger.info(f"Saving model to {model_path}")
+            logger.info(f"Saving Logistic Regression model to {model_path}")
             joblib.dump(lr, model_path)
+            
+            # --- Train Challenger Model (XGBoost) ---
+            logger.info("Training Challenger Model (XGBoost)...")
+            import xgboost as xgb
+            
+            xgb_model = xgb.XGBClassifier(
+                use_label_encoder=False,
+                eval_metric='logloss',
+                random_state=42
+            )
+            
+            # Simple grid search for XGBoost
+            xgb_param_grid = {
+                'n_estimators': [50, 100],
+                'max_depth': [3, 5],
+                'learning_rate': [0.01, 0.1]
+            }
+            
+            xgb_grid = GridSearchCV(
+                estimator=xgb_model,
+                param_grid=xgb_param_grid,
+                scoring='roc_auc',
+                cv=5,
+                verbose=1,
+                n_jobs=1
+            )
+            
+            xgb_grid.fit(X_train, y_train)
+            logger.info(f"XGBoost Best params: {xgb_grid.best_params_}")
+            logger.info(f"XGBoost CV ROC-AUC: {xgb_grid.best_score_:.4f}")
+            
+            xgb_best = xgb_grid.best_estimator_
+            xgb_model_path = os.path.join(self.config.root_dir, "xgb_model.joblib")
+            logger.info(f"Saving XGBoost model to {xgb_model_path}")
+            joblib.dump(xgb_best, xgb_model_path)
 
             logger.info("Model Trainer stage completed successfully")
 
