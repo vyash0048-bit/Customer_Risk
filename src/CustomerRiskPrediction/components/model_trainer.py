@@ -50,10 +50,17 @@ class ModelTrainer:
             final_features = X_train.columns.tolist()
             logger.info(f"Final selected features ({len(final_features)}): {final_features}")
 
+            logger.info("Applying SMOTE for handling class imbalance...")
+            from imblearn.over_sampling import SMOTE
+            smote = SMOTE(random_state=42)
+            X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
+            logger.info(f"Resampled train data shape: {X_train_resampled.shape}")
+
             logger.info(f"Performing GridSearchCV for Logistic Regression...")
             param_grid = {
                 'C': [0.01, 0.1, 1, 10, 100],
-                'penalty': ['l1', 'l2']
+                'penalty': ['l1', 'l2'],
+                'class_weight': ['balanced', None]
             }
             
             base_lr = LogisticRegression(
@@ -71,7 +78,7 @@ class ModelTrainer:
                 n_jobs=1
             )
             
-            grid_search.fit(X_train, y_train)
+            grid_search.fit(X_train_resampled, y_train_resampled)
             
             logger.info(f"Best parameters found: {grid_search.best_params_}")
             logger.info(f"Best cross-validation ROC-AUC: {grid_search.best_score_:.4f}")
@@ -109,7 +116,7 @@ class ModelTrainer:
                 n_jobs=1
             )
             
-            xgb_grid.fit(X_train, y_train)
+            xgb_grid.fit(X_train_resampled, y_train_resampled)
             logger.info(f"XGBoost Best params: {xgb_grid.best_params_}")
             logger.info(f"XGBoost CV ROC-AUC: {xgb_grid.best_score_:.4f}")
             

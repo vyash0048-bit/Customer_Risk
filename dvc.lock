@@ -74,8 +74,8 @@ stages:
       size: 935
     - path: src/CustomerRiskPrediction/components/model_trainer.py
       hash: md5
-      md5: 626d1e663f2f5923f6d6454d64f7a420
-      size: 4950
+      md5: 496185ab1499c0bd9c9b24079e90cb28
+      size: 5383
     - path: src/CustomerRiskPrediction/pipeline/stage_03_model_trainer.py
       hash: md5
       md5: 2e944a2e12e7d23cff46b4990fe84eef
@@ -88,12 +88,12 @@ stages:
     outs:
     - path: artifacts/model_trainer/model.joblib
       hash: md5
-      md5: b57b4d820242940542628b6048ddd0e9
-      size: 1499
+      md5: 7db80f47e9885d62aa5668f2ec77a906
+      size: 1515
     - path: artifacts/model_trainer/xgb_model.joblib
       hash: md5
-      md5: e3337bbfcd0c2c1d85e9ee3282fa929f
-      size: 67159
+      md5: 59827f4e394f7b72e4d540516755d59c
+      size: 197505
   model_evaluation:
     cmd: python src/CustomerRiskPrediction/pipeline/stage_04_model_evaluation.py
     deps:
@@ -103,12 +103,12 @@ stages:
       size: 58375
     - path: artifacts/model_trainer/model.joblib
       hash: md5
-      md5: b57b4d820242940542628b6048ddd0e9
-      size: 1499
+      md5: 7db80f47e9885d62aa5668f2ec77a906
+      size: 1515
     - path: artifacts/model_trainer/xgb_model.joblib
       hash: md5
-      md5: e3337bbfcd0c2c1d85e9ee3282fa929f
-      size: 67159
+      md5: 59827f4e394f7b72e4d540516755d59c
+      size: 197505
     - path: config/config.yaml
       hash: md5
       md5: 0974f1c6618eb4b8e86f02f5486c80b1
@@ -124,9 +124,9 @@ stages:
     outs:
     - path: artifacts/model_evaluation/metrics.json
       hash: md5
-      md5: 8d29b2acd514275d46e33951b59f3144
-      size: 403
+      md5: 591cd8131f5505e409c9f32b3e7aaddf
+      size: 405
     - path: artifacts/model_evaluation/xgb_metrics.json
       hash: md5
-      md5: 07ac48a54fe4a6a137977cbbd9f579a5
-      size: 402
+      md5: 2339d85127fcac30fc1585ce248c903d
+      size: 405
