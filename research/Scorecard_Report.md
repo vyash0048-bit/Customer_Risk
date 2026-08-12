@@ -1,21 +1,21 @@
 # Model Calibration & Scorecard Report
 
 ## 1. Reliability & Calibration
-**Brier Score:** 0.1585
+**Brier Score:** 0.1609
 
 ### Reliability Table
 | Predicted PD   | Actual Default Rate   |
 |:---------------|:----------------------|
-| 2.67%          | 0.00%                 |
-| 5.49%          | 13.33%                |
-| 8.87%          | 13.33%                |
-| 13.60%         | 6.67%                 |
-| 19.74%         | 20.00%                |
-| 26.47%         | 26.67%                |
-| 33.32%         | 33.33%                |
-| 42.39%         | 53.33%                |
-| 57.30%         | 66.67%                |
-| 72.97%         | 66.67%                |
+| 5.64%          | 0.00%                 |
+| 9.09%          | 20.00%                |
+| 12.71%         | 0.00%                 |
+| 17.46%         | 26.67%                |
+| 23.55%         | 6.67%                 |
+| 29.12%         | 33.33%                |
+| 35.09%         | 33.33%                |
+| 43.08%         | 46.67%                |
+| 54.50%         | 60.00%                |
+| 66.20%         | 73.33%                |
 
 ## 2. Scorecard Construction
 **Illustrative Base Score:** 600
@@ -24,21 +24,21 @@
 
 **Calculated Offset:** 487.12
 **Calculated Factor:** 28.85
-**Base Points (Offset + Intercept):** 511
+**Base Points (Offset + Intercept):** 509
 
 ### Scorecard Sample (Top 10)
 | Feature          | Bin   |        WOE |   Coefficient |   Points |
 |:-----------------|:------|-----------:|--------------:|---------:|
-| checking_account | A11   | -0.763916  |     -0.777002 |      -17 |
-| checking_account | A12   | -0.415165  |     -0.777002 |       -9 |
-| checking_account | A13   |  0.133531  |     -0.777002 |        3 |
-| checking_account | A14   |  1.18413   |     -0.777002 |       27 |
-| credit_history   | A30   | -1.13498   |     -0.588866 |      -19 |
-| credit_history   | A31   | -1.05861   |     -0.588866 |      -18 |
-| credit_history   | A32   | -0.0828417 |     -0.588866 |       -1 |
-| credit_history   | A33   | -0.131678  |     -0.588866 |       -2 |
-| credit_history   | A34   |  0.699082  |     -0.588866 |       12 |
-| purpose          | A40   | -0.180353  |     -0.829479 |       -4 |
+| checking_account | A11   | -0.763916  |     -0.703998 |      -16 |
+| checking_account | A12   | -0.415165  |     -0.703998 |       -8 |
+| checking_account | A13   |  0.133531  |     -0.703998 |        3 |
+| checking_account | A14   |  1.18413   |     -0.703998 |       24 |
+| credit_history   | A30   | -1.13498   |     -0.501753 |      -16 |
+| credit_history   | A31   | -1.05861   |     -0.501753 |      -15 |
+| credit_history   | A32   | -0.0828417 |     -0.501753 |       -1 |
+| credit_history   | A33   | -0.131678  |     -0.501753 |       -2 |
+| credit_history   | A34   |  0.699082  |     -0.501753 |       10 |
+| purpose          | A40   | -0.180353  |     -0.534683 |       -3 |
 
 ## 3. Score Interpretation Rules
 - Score >= 750: Very Low Risk
@@ -51,51 +51,51 @@
 ### Example 1
 ```json
 {
-  "Credit Score": 543,
-  "Probability of Default": "12.8%",
+  "Credit Score": 537,
+  "Probability of Default": "15.0%",
   "Risk Grade": "Very High Risk",
   "Risk Drivers": [
     {
       "Feature": "employment",
       "Value": "A72",
-      "Points": -10.738799504610732
+      "Points": -7.589931624552889
     },
     {
       "Feature": "age_binned",
       "Value": "18-25",
-      "Points": -7.234441153760886
+      "Points": -4.181150634189743
     },
     {
       "Feature": "personal_status_sex",
       "Value": "A92",
-      "Points": -4.593337774504535
+      "Points": -1.890262543687239
     },
     {
       "Feature": "savings_account",
       "Value": "A62",
-      "Points": -2.1943183080759505
+      "Points": -1.5697047585401507
     }
   ],
   "Positive Drivers": [
     {
       "Feature": "checking_account",
       "Value": "A14",
-      "Points": 26.54776254998758
-    },
-    {
-      "Feature": "purpose",
-      "Value": "A41",
-      "Points": 13.295795641205403
+      "Points": 24.053431421679694
     },
     {
       "Feature": "duration_binned",
       "Value": "(12.0, 15.0]",
-      "Points": 13.076117463162236
+      "Points": 9.167294406516596
+    },
+    {
+      "Feature": "purpose",
+      "Value": "A41",
+      "Points": 8.570485326972559
     },
     {
       "Feature": "other_installment_plans",
       "Value": "A143",
-      "Points": 3.761794771802136
+      "Points": 2.2909978915345683
     }
   ]
 }
@@ -103,51 +103,51 @@
 ### Example 2
 ```json
 {
-  "Credit Score": 530,
-  "Probability of Default": "18.5%",
+  "Credit Score": 526,
+  "Probability of Default": "20.5%",
   "Risk Grade": "Very High Risk",
   "Risk Drivers": [
     {
       "Feature": "employment",
       "Value": "A72",
-      "Points": -10.738799504610732
+      "Points": -7.589931624552889
     },
     {
       "Feature": "property",
       "Value": "A124",
-      "Points": -8.549495329250574
+      "Points": -7.12787858551759
     },
     {
       "Feature": "savings_account",
       "Value": "A61",
-      "Points": -6.753088327273089
+      "Points": -4.830819140117027
     },
     {
       "Feature": "housing",
       "Value": "A153",
-      "Points": -5.599573914138819
+      "Points": -4.037005492510004
     }
   ],
   "Positive Drivers": [
     {
       "Feature": "checking_account",
       "Value": "A14",
-      "Points": 26.54776254998758
+      "Points": 24.053431421679694
     },
     {
       "Feature": "credit_history",
       "Value": "A34",
-      "Points": 11.87815746088598
+      "Points": 10.120980965936699
     },
     {
       "Feature": "purpose",
       "Value": "A43",
-      "Points": 9.210789784038289
+      "Points": 5.937285802534498
     },
     {
       "Feature": "other_installment_plans",
       "Value": "A143",
-      "Points": 3.761794771802136
+      "Points": 2.2909978915345683
     }
   ]
 }

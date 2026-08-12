@@ -28,7 +28,11 @@ class ModelEvaluation:
             model = joblib.load(self.config.model_path)
 
             target_column = self.config.target_column
-            woe_columns = [col for col in test_data.columns if col.endswith('_WOE')]
+            
+            if hasattr(model, 'feature_names_in_'):
+                woe_columns = list(model.feature_names_in_)
+            else:
+                woe_columns = [col for col in test_data.columns if col.endswith('_WOE')]
             
             logger.info(f"Using WOE features for evaluation: {woe_columns}")
             X_test = test_data[woe_columns]
