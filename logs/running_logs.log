@@ -1033,3 +1033,86 @@ x==========x]
 [2026-08-12 12:30:55,844: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage completed <<<<<<
 
 x==========x]
+[2026-08-12 12:34:56,636: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage started <<<<<<]
+[2026-08-12 12:34:56,636: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:34:56,639: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:34:56,640: INFO: common: created directory at: artifacts]
+[2026-08-12 12:34:56,640: INFO: common: created directory at: artifacts/data_transformation]
+[2026-08-12 12:34:56,640: INFO: data_transformation: Reading data from ingestion artifacts]
+[2026-08-12 12:34:56,651: INFO: data_transformation: df.dtypes:
+checking_account             str
+duration                   int64
+credit_history               str
+purpose                      str
+credit_amount              int64
+savings_account              str
+employment                   str
+installment_rate           int64
+personal_status_sex          str
+other_debtors                str
+residence_since            int64
+property                     str
+age                        int64
+other_installment_plans      str
+housing                      str
+existing_credits           int64
+job                          str
+dependents                 int64
+telephone                    str
+foreign_worker               str
+credit_risk                int64
+dtype: object]
+[2026-08-12 12:34:56,652: INFO: data_transformation: Splitting data into train, val, test]
+[2026-08-12 12:34:56,712: INFO: data_transformation: Train size: (700, 21), Val size: (150, 21), Test size: (150, 21)]
+[2026-08-12 12:34:56,713: INFO: data_transformation: Binning numerical variables]
+[2026-08-12 12:34:56,734: INFO: data_transformation: Calculating WOE & IV mapping on Train Data]
+[2026-08-12 12:34:56,735: INFO: data_transformation: Categorical cols identified: ['checking_account', 'credit_history', 'purpose', 'savings_account', 'employment', 'personal_status_sex', 'other_debtors', 'property', 'other_installment_plans', 'housing', 'job', 'telephone', 'foreign_worker']]
+[2026-08-12 12:34:56,744: INFO: data_transformation: Feature 'checking_account' IV: 0.6388 (Keep)]
+[2026-08-12 12:34:56,752: INFO: data_transformation: Feature 'credit_history' IV: 0.2544 (Keep)]
+[2026-08-12 12:34:56,762: INFO: data_transformation: Feature 'purpose' IV: 0.1322 (Keep)]
+[2026-08-12 12:34:56,777: INFO: data_transformation: Feature 'savings_account' IV: 0.2335 (Keep)]
+[2026-08-12 12:34:56,791: INFO: data_transformation: Feature 'employment' IV: 0.1403 (Keep)]
+[2026-08-12 12:34:56,797: INFO: data_transformation: Feature 'personal_status_sex' IV: 0.0392 (Keep)]
+[2026-08-12 12:34:56,804: INFO: data_transformation: Feature 'other_debtors' IV: 0.0267 (Keep)]
+[2026-08-12 12:34:56,812: INFO: data_transformation: Feature 'property' IV: 0.1402 (Keep)]
+[2026-08-12 12:34:56,820: INFO: data_transformation: Feature 'other_installment_plans' IV: 0.1169 (Keep)]
+[2026-08-12 12:34:56,825: INFO: data_transformation: Feature 'housing' IV: 0.1020 (Keep)]
+[2026-08-12 12:34:56,831: INFO: data_transformation: Feature 'job' IV: 0.0228 (Keep)]
+[2026-08-12 12:34:56,839: INFO: data_transformation: Feature 'telephone' IV: 0.0029 (Remove)]
+[2026-08-12 12:34:56,848: INFO: data_transformation: Feature 'foreign_worker' IV: 0.0767 (Keep)]
+[2026-08-12 12:34:56,859: INFO: data_transformation: Feature 'age_binned' IV: 0.0744 (Keep)]
+[2026-08-12 12:34:56,873: INFO: data_transformation: Feature 'duration_binned' IV: 0.1871 (Keep)]
+[2026-08-12 12:34:56,877: INFO: data_transformation: Applying WOE transformation]
+[2026-08-12 12:34:56,943: INFO: data_transformation: Saving transformed datasets and WOE rules to artifacts/data_transformation]
+[2026-08-12 12:34:56,985: INFO: data_transformation: Data Transformation completed successfully]
+[2026-08-12 12:34:56,986: INFO: stage_02_data_transformation: >>>>>> stage Data Transformation Stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:34:59,766: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage started <<<<<<]
+[2026-08-12 12:34:59,769: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:34:59,771: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:34:59,771: INFO: common: created directory at: artifacts]
+[2026-08-12 12:34:59,771: INFO: common: created directory at: artifacts/model_trainer]
+[2026-08-12 12:34:59,772: INFO: model_trainer: Reading train data]
+[2026-08-12 12:34:59,806: INFO: model_trainer: Using WOE features for training: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:34:59,809: INFO: model_trainer: Training Logistic Regression with solver=liblinear, max_iter=1000]
+[2026-08-12 12:34:59,887: INFO: model_trainer: Saving model to artifacts/model_trainer\model.joblib]
+[2026-08-12 12:34:59,889: INFO: model_trainer: Model Trainer stage completed successfully]
+[2026-08-12 12:34:59,889: INFO: stage_03_model_trainer: >>>>>> stage Model Trainer stage completed <<<<<<
+
+x==========x]
+[2026-08-12 12:35:02,533: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage started <<<<<<]
+[2026-08-12 12:35:02,536: INFO: common: yaml file: config\config.yaml loaded successfully]
+[2026-08-12 12:35:02,537: INFO: common: yaml file: params.yaml loaded successfully]
+[2026-08-12 12:35:02,538: INFO: common: created directory at: artifacts]
+[2026-08-12 12:35:02,539: INFO: common: created directory at: artifacts/model_evaluation]
+[2026-08-12 12:35:02,539: INFO: model_evaluation: Reading test data]
+[2026-08-12 12:35:02,648: INFO: model_evaluation: Using WOE features for evaluation: ['checking_account_WOE', 'credit_history_WOE', 'purpose_WOE', 'savings_account_WOE', 'employment_WOE', 'personal_status_sex_WOE', 'other_debtors_WOE', 'property_WOE', 'other_installment_plans_WOE', 'housing_WOE', 'job_WOE', 'foreign_worker_WOE', 'age_binned_WOE', 'duration_binned_WOE']]
+[2026-08-12 12:35:02,649: INFO: model_evaluation: Predicting on test data]
+[2026-08-12 12:35:02,688: INFO: model_evaluation: Calculating metrics]
+[2026-08-12 12:35:02,741: INFO: model_evaluation: Metrics evaluated: {'ROC_AUC': 0.8076190476190477, 'Gini': 0.6152380952380954, 'PR_AUC': 0.6181103664867527, 'Log_Loss': 0.48214961638297676, 'Brier_Score': 0.15848553188838843, 'Precision': 0.6896551724137931, 'Recall': 0.4444444444444444, 'F1_Score': 0.5405405405405406, 'Confusion_Matrix': {'TN': 96, 'FP': 9, 'FN': 25, 'TP': 20}}]
+[2026-08-12 12:35:02,743: INFO: common: json file saved at: artifacts\model_evaluation\metrics.json]
+[2026-08-12 12:35:02,744: INFO: model_evaluation: Model evaluation completed successfully]
+[2026-08-12 12:35:02,744: INFO: stage_04_model_evaluation: >>>>>> stage Model Evaluation stage completed <<<<<<
+
+x==========x]

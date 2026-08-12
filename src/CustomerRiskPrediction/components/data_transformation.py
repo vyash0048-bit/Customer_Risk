@@ -82,10 +82,9 @@ class DataTransformation:
                 validation = transform_to_woe(validation, f, rules)
                 test = transform_to_woe(test, f, rules)
 
-            # Keep only original non-categorical features and newly created WOE features
-            numerical_cols = [col for col in df.columns if df[col].dtype.name not in ['object', 'category', 'string', 'str'] and col != 'credit_risk']
             woe_cols = [f"{f}_WOE" for f in features_to_transform]
-            final_columns = numerical_cols + woe_cols + ['credit_risk']
+            # Keep original features and newly created WOE features
+            final_columns = list(df.columns) + ['age_binned', 'duration_binned'] + woe_cols
 
             train = train[final_columns]
             validation = validation[final_columns]
