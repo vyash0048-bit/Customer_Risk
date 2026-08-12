@@ -1,0 +1,63 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/CustomerRiskPrediction/pipeline/stage_01_data_ingestion.py
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: e329f88ad8676281a7791472445c1e98
+      size: 571
+    - path: src/CustomerRiskPrediction/components/data_ingestion.py
+      hash: md5
+      md5: 6de4171182899133c0aab37c39804913
+      size: 3494
+    - path: src/CustomerRiskPrediction/pipeline/stage_01_data_ingestion.py
+      hash: md5
+      md5: a3574cad357c9358d1f151d2ea51a708
+      size: 870
+    outs:
+    - path: artifacts/data_ingestion/data.csv
+      hash: md5
+      md5: 8a524d20779aafd29141c131099ef342
+      size: 81065
+  data_transformation:
+    cmd: python 
+      src/CustomerRiskPrediction/pipeline/stage_02_data_transformation.py
+    deps:
+    - path: artifacts/data_ingestion/data.csv
+      hash: md5
+      md5: 8a524d20779aafd29141c131099ef342
+      size: 81065
+    - path: config/config.yaml
+      hash: md5
+      md5: e329f88ad8676281a7791472445c1e98
+      size: 571
+    - path: src/CustomerRiskPrediction/components/data_transformation.py
+      hash: md5
+      md5: f830c98c3cc772af1b1b48f9c2966638
+      size: 4887
+    - path: src/CustomerRiskPrediction/pipeline/stage_02_data_transformation.py
+      hash: md5
+      md5: 32d9b8c3b9530b905cdcef9d2982a6b5
+      size: 934
+    - path: src/woe_iv.py
+      hash: md5
+      md5: 5b3a87c00fd806766659af738b691231
+      size: 2409
+    outs:
+    - path: artifacts/data_transformation/test.csv
+      hash: md5
+      md5: 751fea7ff8a33b8c63aee282dd6d88bd
+      size: 18511
+    - path: artifacts/data_transformation/train.csv
+      hash: md5
+      md5: 4b4ff9604ea6e299b9b3d7bfd46e00da
+      size: 85357
+    - path: artifacts/data_transformation/val.csv
+      hash: md5
+      md5: 8dac728dca6c477f86d247aa197d1479
+      size: 18552
+    - path: artifacts/data_transformation/woe_rules.csv
+      hash: md5
+      md5: 5c7593cabd1b83fbbc6ed97dbde8b08b
+      size: 1219

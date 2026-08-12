@@ -7,3 +7,12 @@ class DataIngestionConfig:
     source_data_file: Path
     local_data_file: Path
     table_name: str
+
+@dataclass(frozen=True)
+class DataTransformationConfig:
+    root_dir: Path
+    data_path: Path
+    transformed_train_path: Path
+    transformed_val_path: Path
+    transformed_test_path: Path
+    woe_rules_path: Path
