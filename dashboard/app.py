@@ -198,7 +198,9 @@ def model_info():
             
     return render_template('model_info.html', metrics=metrics)
 
+# Create database tables before starting the app
+with app.app_context():
+    db.create_all()
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True, port=5000)
