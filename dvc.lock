@@ -74,8 +74,8 @@ stages:
       size: 935
     - path: src/CustomerRiskPrediction/components/model_trainer.py
       hash: md5
-      md5: a3517d2d927052d74cf30e2b8edb614e
-      size: 10637
+      md5: 2904933098be319bdd9896feb8569574
+      size: 5807
     - path: src/CustomerRiskPrediction/pipeline/stage_03_model_trainer.py
       hash: md5
       md5: 2e944a2e12e7d23cff46b4990fe84eef
@@ -86,26 +86,14 @@ stages:
         LogisticRegression.random_state: 42
         LogisticRegression.solver: liblinear
     outs:
-    - path: artifacts/model_trainer/cb_model.joblib
-      hash: md5
-      md5: 84f0cda92f195ff15695c696918ea0f1
-      size: 57303
     - path: artifacts/model_trainer/lr_threshold.json
       hash: md5
-      md5: 9b307fbea3728ffe12b92163de9dc878
-      size: 37
+      md5: 0b388d78346203fc6ad82ab0888ae6b3
+      size: 22
     - path: artifacts/model_trainer/model.joblib
       hash: md5
-      md5: 844b617f0e582c351832fc2ce43dce0f
-      size: 1503
-    - path: artifacts/model_trainer/stack_model.joblib
-      hash: md5
-      md5: 81c901db6c7383d20667eb316e655ef0
-      size: 128440
-    - path: artifacts/model_trainer/stack_threshold.json
-      hash: md5
-      md5: 15eff1955324e814473ad0d43c61d6e9
-      size: 40
+      md5: b6c1f5ff1125fbb0b8e9bab9a4a989bd
+      size: 1487
   model_evaluation:
     cmd: python src/CustomerRiskPrediction/pipeline/stage_04_model_evaluation.py
     deps:
@@ -113,48 +101,28 @@ stages:
       hash: md5
       md5: 6055eaf2f39bcbd660d1c46e2543d6e4
       size: 58375
-    - path: artifacts/model_trainer/cb_model.joblib
-      hash: md5
-      md5: 84f0cda92f195ff15695c696918ea0f1
-      size: 57303
     - path: artifacts/model_trainer/lr_threshold.json
       hash: md5
-      md5: 9b307fbea3728ffe12b92163de9dc878
-      size: 37
+      md5: 0b388d78346203fc6ad82ab0888ae6b3
+      size: 22
     - path: artifacts/model_trainer/model.joblib
       hash: md5
-      md5: 844b617f0e582c351832fc2ce43dce0f
-      size: 1503
-    - path: artifacts/model_trainer/stack_model.joblib
-      hash: md5
-      md5: 81c901db6c7383d20667eb316e655ef0
-      size: 128440
-    - path: artifacts/model_trainer/stack_threshold.json
-      hash: md5
-      md5: 15eff1955324e814473ad0d43c61d6e9
-      size: 40
+      md5: b6c1f5ff1125fbb0b8e9bab9a4a989bd
+      size: 1487
     - path: config/config.yaml
       hash: md5
       md5: 0974f1c6618eb4b8e86f02f5486c80b1
       size: 935
     - path: src/CustomerRiskPrediction/components/model_evaluation.py
       hash: md5
-      md5: 41a1a64ed1806c12266717c77db19e51
-      size: 8253
+      md5: e5dd412275e7e9a7fc80073756491487
+      size: 3319
     - path: src/CustomerRiskPrediction/pipeline/stage_04_model_evaluation.py
       hash: md5
       md5: ff6aef486f886b013c57c5c037669ee2
       size: 891
     outs:
-    - path: artifacts/model_evaluation/cb_metrics.json
-      hash: md5
-      md5: 9ff18d58e4e57626d1979dce23b78fd4
-      size: 404
     - path: artifacts/model_evaluation/metrics.json
       hash: md5
-      md5: a5534fd87b3c2ac73c8fad9162d7cab0
-      size: 404
-    - path: artifacts/model_evaluation/stack_metrics.json
-      hash: md5
-      md5: 4318bcf524d20f9c22a3f9011257f77e
-      size: 404
+      md5: b622400f341e3915a1a89819e6d22075
+      size: 403

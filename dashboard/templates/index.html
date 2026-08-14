@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Risk Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="background-mesh"></div>
+    <div class="container">
+        <header class="header animate-fade-in">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <div class="header-text">
+                        <h1>Customer Risk Intelligence</h1>
+                        <p>AI-Powered Scorecard & Default Prediction</p>
+                    </div>
+                </div>
+                <nav class="nav-links">
+                    <a href="/" class="nav-item active">Dashboard</a>
+                    <a href="/model-info" class="nav-item">Model & Metrics</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <section class="card form-section animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="card-header">
+                    <h2>Application Details</h2>
+                    <span class="badge">New Assessment</span>
+                </div>
+                
+                <form method="POST" action="/">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="age">Age</label>
+                            <input type="number" id="age" name="age" required placeholder="e.g. 35" value="{{ form.get('age', 35) }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Loan Duration (Months)</label>
+                            <input type="number" id="duration" name="duration" required placeholder="e.g. 24" value="{{ form.get('duration', 24) }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="credit_amount">Credit Amount ($)</label>
+                            <input type="number" id="credit_amount" name="credit_amount" required placeholder="e.g. 5000" value="{{ form.get('credit_amount', 5000) }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="checking_account">Checking Account</label>
+                            <div class="select-wrapper">
+                                <select id="checking_account" name="checking_account">
+                                    <option value="A11" {% if form.get('checking_account') == 'A11' %}selected{% endif %}>< 0 DM</option>
+                                    <option value="A12" {% if form.get('checking_account') == 'A12' %}selected{% endif %}>0 <= x < 200 DM</option>
+                                    <option value="A13" {% if form.get('checking_account') == 'A13' %}selected{% endif %}>>= 200 DM / salary assignments</option>
+                                    <option value="A14" {% if form.get('checking_account', 'A14') == 'A14' %}selected{% endif %}>No checking account</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="savings_account">Savings Account</label>
+                            <div class="select-wrapper">
+                                <select id="savings_account" name="savings_account">
+                                    <option value="A61" {% if form.get('savings_account') == 'A61' %}selected{% endif %}>< 100 DM</option>
+                                    <option value="A62" {% if form.get('savings_account') == 'A62' %}selected{% endif %}>100 <= x < 500 DM</option>
+                                    <option value="A63" {% if form.get('savings_account') == 'A63' %}selected{% endif %}>500 <= x < 1000 DM</option>
+                                    <option value="A64" {% if form.get('savings_account') == 'A64' %}selected{% endif %}>>= 1000 DM</option>
+                                    <option value="A65" {% if form.get('savings_account', 'A65') == 'A65' %}selected{% endif %}>Unknown/ no savings account</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="employment">Employment Duration</label>
+                            <div class="select-wrapper">
+                                <select id="employment" name="employment">
+                                    <option value="A71" {% if form.get('employment') == 'A71' %}selected{% endif %}>Unemployed</option>
+                                    <option value="A72" {% if form.get('employment') == 'A72' %}selected{% endif %}>< 1 year</option>
+                                    <option value="A73" {% if form.get('employment', 'A73') == 'A73' %}selected{% endif %}>1 <= x < 4 years</option>
+                                    <option value="A74" {% if form.get('employment') == 'A74' %}selected{% endif %}>4 <= x < 7 years</option>
+                                    <option value="A75" {% if form.get('employment') == 'A75' %}selected{% endif %}>>= 7 years</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="credit_history">Credit History</label>
+                            <div class="select-wrapper">
+                                <select id="credit_history" name="credit_history">
+                                    <option value="A30" {% if form.get('credit_history') == 'A30' %}selected{% endif %}>No credits taken/all paid back</option>
+                                    <option value="A31" {% if form.get('credit_history') == 'A31' %}selected{% endif %}>All credits paid back duly</option>
+                                    <option value="A32" {% if form.get('credit_history', 'A32') == 'A32' %}selected{% endif %}>Existing credits paid back duly</option>
+                                    <option value="A33" {% if form.get('credit_history') == 'A33' %}selected{% endif %}>Delay in paying off</option>
+                                    <option value="A34" {% if form.get('credit_history') == 'A34' %}selected{% endif %}>Critical account</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="housing">Housing</label>
+                            <div class="select-wrapper">
+                                <select id="housing" name="housing">
+                                    <option value="A151" {% if form.get('housing') == 'A151' %}selected{% endif %}>Rent</option>
+                                    <option value="A152" {% if form.get('housing', 'A152') == 'A152' %}selected{% endif %}>Own</option>
+                                    <option value="A153" {% if form.get('housing') == 'A153' %}selected{% endif %}>For free</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="purpose">Purpose</label>
+                            <div class="select-wrapper">
+                                <select id="purpose" name="purpose">
+                                    <option value="A40" {% if form.get('purpose') == 'A40' %}selected{% endif %}>Car (new)</option>
+                                    <option value="A41" {% if form.get('purpose') == 'A41' %}selected{% endif %}>Car (used)</option>
+                                    <option value="A42" {% if form.get('purpose') == 'A42' %}selected{% endif %}>Furniture/equipment</option>
+                                    <option value="A43" {% if form.get('purpose', 'A43') == 'A43' %}selected{% endif %}>Radio/TV</option>
+                                    <option value="A49" {% if form.get('purpose') == 'A49' %}selected{% endif %}>Business</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4"/><path d="M12 16V8"/></svg>
+                        Calculate Risk Profile
+                    </button>
+                </form>
+            </section>
+
+            {% if result %}
+            <section class="results-section">
+                <div class="card result-hero animate-slide-up" style="animation-delay: 0.2s;">
+                    
+                    <div class="gauge-container">
+                        <svg viewBox="0 0 200 120" class="gauge">
+                            <!-- Background track -->
+                            <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" />
+                            <!-- Colored fill -->
+                            <path class="gauge-fill {{ result['Decision_Class'] }}" d="M 20 100 A 80 80 0 0 1 180 100" style="stroke-dasharray: {{ result['Score_Percent'] * 2.51 }} 251;" />
+                        </svg>
+                        <div class="gauge-text">
+                            <span class="score-value counter">{{ result['Credit Score'] }}</span>
+                            <span class="score-label">Credit Score</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <span class="stat-label">Probability of Default</span>
+                            <span class="stat-value">{{ result['Probability of Default Formatted'] }}</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Risk Grade</span>
+                            <span class="stat-value">{{ result['Risk Grade'].upper() }}</span>
+                        </div>
+                    </div>
+
+                    <div class="decision-box {{ result['Decision_Class'] }}">
+                        <div class="decision-icon">
+                            {% if result['Decision_Class'] == 'approve' %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            {% elif result['Decision_Class'] == 'reject' %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                            {% else %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            {% endif %}
+                        </div>
+                        <div class="decision-text">
+                            <strong>{{ result['Decision'] }}</strong>
+                            <span>System Recommendation</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card drivers-card animate-slide-up" style="animation-delay: 0.3s;">
+                    <div class="drivers-header">
+                        <h3>Score Contribution by Feature</h3>
+                        <p>Mathematical breakdown of the risk drivers</p>
+                    </div>
+                    
+                    <div class="drivers-group">
+                        <h4>Top Risk Drivers (Score Penalties)</h4>
+                        <ul class="driver-list risk">
+                            {% for driver in result['Risk Drivers'] %}
+                                {% if driver['score_contribution'] < 0 %}
+                                <li class="driver-item" style="animation-delay: {{ 0.4 + loop.index * 0.05 }}s;">
+                                    <div class="driver-info">
+                                        <span class="feature-name">{{ driver['feature'].replace('_binned', '').replace('_', ' ') }}</span>
+                                        <span class="feature-val">{{ driver['bin'] }}</span>
+                                    </div>
+                                    <div class="bar-container">
+                                        <div class="bar-track">
+                                            <div class="bar-fill negative" style="width: {{ [(-driver['score_contribution'] / 30 * 100), 100]|min }}%"></div>
+                                        </div>
+                                        <span class="points negative">{{ "%.1f"|format(driver['score_contribution']) }} pts</span>
+                                    </div>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="drivers-group mt-4">
+                        <h4>Top Positive Drivers (Score Boosts)</h4>
+                        <ul class="driver-list positive">
+                            {% for driver in result['Positive Drivers'] %}
+                                {% if driver['score_contribution'] > 0 %}
+                                <li class="driver-item" style="animation-delay: {{ 0.6 + loop.index * 0.05 }}s;">
+                                    <div class="driver-info">
+                                        <span class="feature-name">{{ driver['feature'].replace('_binned', '').replace('_', ' ') }}</span>
+                                        <span class="feature-val">{{ driver['bin'] }}</span>
+                                    </div>
+                                    <div class="bar-container">
+                                        <div class="bar-track">
+                                            <div class="bar-fill positive" style="width: {{ [(driver['score_contribution'] / 30 * 100), 100]|min }}%"></div>
+                                        </div>
+                                        <span class="points positive">+{{ "%.1f"|format(driver['score_contribution']) }} pts</span>
+                                    </div>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            {% else %}
+            <section class="empty-state card animate-fade-in" style="animation-delay: 0.2s;">
+                <div class="empty-content">
+                    <div class="empty-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M8 15h8"/></svg>
+                    </div>
+                    <h3>Ready for Assessment</h3>
+                    <p>Enter the applicant's financial details to generate a comprehensive scorecard, default probability, and risk breakdown.</p>
+                </div>
+            </section>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

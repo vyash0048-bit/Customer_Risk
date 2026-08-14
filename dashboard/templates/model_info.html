@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Information - Risk Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .metric-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .info-content {
+            color: #cbd5e1;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        
+        .info-content h3 {
+            color: #fff;
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .info-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .info-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .cm-grid {
+            display: grid;
+            grid-template-columns: auto 1fr 1fr;
+            gap: 2px;
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            max-width: 400px;
+            margin: 1.5rem auto;
+        }
+        
+        .cm-cell {
+            background: #1e293b;
+            padding: 1rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cm-header {
+            background: #0f172a;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        .cm-val {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-mesh"></div>
+    <div class="container">
+        <header class="header animate-fade-in">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <div class="header-text">
+                        <h1>Customer Risk Intelligence</h1>
+                        <p>AI-Powered Scorecard & Default Prediction</p>
+                    </div>
+                </div>
+                <nav class="nav-links">
+                    <a href="/" class="nav-item">Dashboard</a>
+                    <a href="/model-info" class="nav-item active">Model & Metrics</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="dashboard-grid" style="grid-template-columns: 1fr; max-width: 900px; margin: 0 auto;">
+            <section class="card animate-slide-up">
+                <div class="card-header" style="margin-bottom: 1rem;">
+                    <h2>Model Performance Metrics</h2>
+                    <span class="badge">Production v1.0</span>
+                </div>
+                
+                {% if metrics %}
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">{{ "%.1f"|format(metrics.get('Recall', 0) * 100) }}%</div>
+                        <div class="metric-label">Recall (Sensitivity)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">{{ "%.2f"|format(metrics.get('ROC_AUC', 0)) }}</div>
+                        <div class="metric-label">ROC AUC Score</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">{{ "%.2f"|format(metrics.get('Gini', 0)) }}</div>
+                        <div class="metric-label">Gini Coefficient</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">{{ "%.1f"|format(metrics.get('Precision', 0) * 100) }}%</div>
+                        <div class="metric-label">Precision</div>
+                    </div>
+                </div>
+                
+                <div class="info-content">
+                    <h3>Holdout Test Set Confusion Matrix</h3>
+                    <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">Evaluating the model's ability to accurately detect True Defaults (Bad Loans).</p>
+                    
+                    <div class="cm-grid">
+                        <div class="cm-cell cm-header" style="background: transparent;"></div>
+                        <div class="cm-cell cm-header">Predicted Good</div>
+                        <div class="cm-cell cm-header">Predicted Default</div>
+                        
+                        <div class="cm-cell cm-header">Actual Good</div>
+                        <div class="cm-cell"><span class="cm-val" style="color: var(--success);">{{ metrics.get('Confusion_Matrix', {}).get('TN', '-') }}</span><br><span style="font-size:0.75rem; color:var(--text-muted);">True Negatives</span></div>
+                        <div class="cm-cell"><span class="cm-val" style="color: var(--warning);">{{ metrics.get('Confusion_Matrix', {}).get('FP', '-') }}</span><br><span style="font-size:0.75rem; color:var(--text-muted);">False Positives</span></div>
+                        
+                        <div class="cm-cell cm-header">Actual Default</div>
+                        <div class="cm-cell"><span class="cm-val" style="color: var(--danger);">{{ metrics.get('Confusion_Matrix', {}).get('FN', '-') }}</span><br><span style="font-size:0.75rem; color:var(--text-muted);">False Negatives (Missed)</span></div>
+                        <div class="cm-cell"><span class="cm-val" style="color: var(--success);">{{ metrics.get('Confusion_Matrix', {}).get('TP', '-') }}</span><br><span style="font-size:0.75rem; color:var(--text-muted);">True Positives (Caught)</span></div>
+                    </div>
+                </div>
+                {% else %}
+                <p style="color: var(--warning);">Metrics file not found. Ensure the model evaluation pipeline has been run.</p>
+                {% endif %}
+
+                <div class="info-content">
+                    <h3>Algorithm & Methodology</h3>
+                    <p>The core engine behind this dashboard is a <strong>Logistic Regression</strong> model trained on <strong>Weight of Evidence (WOE)</strong> transformed features, a gold standard in traditional credit risk scorecards.</p>
+                    
+                    <ul>
+                        <li><strong>Weight of Evidence (WOE) Binning:</strong> Continuous and categorical variables were bucketed into discrete bins. Each bin was assigned a WOE value reflecting the log-odds ratio of good vs. bad customers in that bin. This handles non-linear relationships and missing values natively.</li>
+                        <li><strong>Linear Predictor:</strong> The logistic regression model assigns a strict coefficient to each WOE variable. Because WOE handles the non-linearities, the logistic regression serves as a clean, highly interpretable linear aggregator.</li>
+                        <li><strong>Scorecard Transformation:</strong> The log-odds predictions are mapped to a human-readable scale. The model is scaled such that a score of <strong>600 represents baseline odds of 50:1</strong>, and it takes <strong>20 points to double the odds (PDO)</strong> of a good outcome.</li>
+                    </ul>
+
+                    <h3>Business Objective: High Recall Prioritization</h3>
+                    <p>Financial institutions typically prefer to avoid bad loans (defaults) even at the expense of rejecting some marginally good loans. Missing a default (False Negative) is much more expensive than a missed opportunity (False Positive).</p>
+                    
+                    <p>To align with this objective, the model's decision threshold was mathematically optimized on the validation set using the <strong>F2 Score</strong>. The F2 Score weights Recall twice as heavily as Precision.</p>
+                    <ul>
+                        <li><strong>High Recall ({{ "%.1f"|format(metrics.get('Recall', 0) * 100) }}%):</strong> The model successfully captures the vast majority of actual defaults.</li>
+                        <li><strong>Trade-off:</strong> This safety mechanism naturally results in a lower Precision ({{ "%.1f"|format(metrics.get('Precision', 0) * 100) }}%), meaning a higher rate of False Positives (good applicants flagged for manual review or rejection).</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

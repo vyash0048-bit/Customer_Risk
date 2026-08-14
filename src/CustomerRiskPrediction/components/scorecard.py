@@ -1,158 +1,173 @@
-import numpy as np
 import pandas as pd
+import numpy as np
 import joblib
-from sklearn.calibration import calibration_curve
-from sklearn.metrics import brier_score_loss
+import os
 
-class ScorecardBuilder:
-    def __init__(self, model_path, woe_rules_path):
+class ScorecardExplainer:
+    def __init__(self, model_path, woe_rules_path, base_score=600, base_odds=50, pdo=20):
         self.model = joblib.load(model_path)
         self.woe_rules = pd.read_csv(woe_rules_path)
+        self.base_score = base_score
+        self.base_odds = base_odds
+        self.pdo = pdo
+        self.factor = pdo / np.log(2)
+        self.offset = base_score - self.factor * np.log(base_odds)
         
-        # We need the feature names that the model was trained on
-        # Assuming model.feature_names_in_ is available
-        self.features = self.model.feature_names_in_
-        
-        # Extract coefficients
-        self.intercept = self.model.intercept_[0]
-        self.coef = self.model.coef_[0]
-        self.coef_dict = dict(zip(self.features, self.coef))
-        
-        # Scorecard parameters
-        self.pdo = 20
-        self.base_score = 600
-        self.base_odds = 50  # 50:1 Good to Bad odds
-        
-        # Calculate Factor and Offset
-        # Note: the model predicts Default (1) which is "Bad". 
-        # Standard scorecard: Score = Offset - Factor * ln(Odds of Bad)
-        # Or if we want higher score for lower risk (Better):
-        # Probability of Default = P(Bad)
-        # Log-odds of Bad = intercept + sum(coef * woe)
-        # We want higher score = Good (Low Risk).
-        # Score = Offset - Factor * Log-odds(Bad)
-        # Log-odds(Bad) = - Log-odds(Good)
-        # Factor = PDO / ln(2)
-        
-        self.factor = self.pdo / np.log(2)
-        
-        # Base Odds = 50:1 means Odds(Good/Bad) = 50.
-        # Log-odds(Bad) = ln(1/50) = -ln(50)
-        # Base Score = Offset - Factor * ln(1/50) => Offset = Base Score + Factor * ln(1/50)
-        
-        # Wait, usually Base Odds is defined as Good:Bad odds.
-        # Odds(Good) = 50. ln(Odds(Good)) = ln(50)
-        # Score = Offset + Factor * ln(Odds(Good))
-        # 600 = Offset + (20/ln(2)) * ln(50)
-        self.offset = self.base_score - self.factor * np.log(self.base_odds)
-        
-    def generate_scorecard(self):
-        """Generates the scorecard points for every bin of every feature."""
-        scorecard = []
-        
-        # The base points include the intercept scaled by the factor + offset
-        base_points = self.offset - self.factor * self.intercept
-        
-        for index, row in self.woe_rules.iterrows():
-            feature = row['feature']
-            woe_col = f"{feature}_WOE"
-            if woe_col in self.coef_dict:
-                woe = row['WOE']
-                coef = self.coef_dict[woe_col]
-                
-                # Point contribution = - Factor * (Coefficient * WOE)
-                # Why minus? Because coef * WOE is the log-odds of BAD.
-                # Score = Offset - Factor * (intercept + sum(coef * WOE))
-                points = -self.factor * coef * woe
-                
-                scorecard.append({
-                    'Feature': feature,
-                    'Bin': row['bin'],
-                    'WOE': woe,
-                    'Coefficient': coef,
-                    'Points': round(points)
-                })
-                
-        return pd.DataFrame(scorecard), round(base_points)
-
-    def calculate_reliability_table(self, y_true, y_pred_proba, n_bins=10):
-        prob_true, prob_pred = calibration_curve(y_true, y_pred_proba, n_bins=n_bins, strategy='quantile')
-        brier = brier_score_loss(y_true, y_pred_proba)
-        
-        reliability_table = pd.DataFrame({
-            'Predicted PD': prob_pred,
-            'Actual Default Rate': prob_true
-        })
-        
-        # Optional: formatting
-        reliability_table['Predicted PD'] = reliability_table['Predicted PD'].apply(lambda x: f"{x*100:.2f}%")
-        reliability_table['Actual Default Rate'] = reliability_table['Actual Default Rate'].apply(lambda x: f"{x*100:.2f}%")
-        
-        return reliability_table, brier
-
-    def predict_score(self, X_woe):
-        """Calculate the credit score for a given row or dataframe of WOE features."""
-        # Log-odds of Bad
-        log_odds_bad = self.model.decision_function(X_woe)
-        
-        # Score = Offset - Factor * Log-odds_bad
-        score = self.offset - self.factor * log_odds_bad
-        return score
-        
-    def get_risk_grade(self, score):
-        if score >= 750:
-            return "Very Low Risk"
-        elif 700 <= score <= 749:
-            return "Low Risk"
-        elif 650 <= score <= 699:
-            return "Moderate Risk"
-        elif 600 <= score <= 649:
-            return "High Risk"
+        # Get intercept
+        if hasattr(self.model, 'intercept_'):
+            self.intercept = self.model.intercept_[0]
         else:
-            return "Very High Risk"
-
-    def explain_customer(self, customer_raw, customer_woe):
-        """
-        Explain the scorecard for a specific customer.
-        customer_raw: Series or dict of raw features
-        customer_woe: Series or dict of WOE features
-        """
-        # Calculate predicted probability
-        # Reshape for single prediction if necessary
-        X = pd.DataFrame([customer_woe])
-        pd_prob = self.model.predict_proba(X)[0][1]
-        
-        score = self.predict_score(X)[0]
-        risk_grade = self.get_risk_grade(score)
-        
-        contributions = []
-        for feature in self.features:
-            coef = self.coef_dict[feature]
-            woe_val = customer_woe[feature]
-            raw_feature = feature.replace('_WOE', '')
-            raw_val = customer_raw.get(raw_feature, "Unknown")
+            self.intercept = 0.0
             
-            # Points for this feature
-            points = -self.factor * coef * woe_val
+        # Get coefficients
+        if hasattr(self.model, 'feature_names_in_'):
+            self.features = list(self.model.feature_names_in_)
+        else:
+            raise ValueError("Model must have feature_names_in_")
+            
+        self.coefs = {f: c for f, c in zip(self.features, self.model.coef_[0])}
+        
+    def map_to_woe(self, feature_name, value):
+        rules = self.woe_rules[self.woe_rules['feature'] == feature_name]
+        
+        if feature_name == 'age_binned':
+            for b in rules['bin'].values:
+                if '+' in str(b):
+                    lower = float(b.replace('+', ''))
+                    if value >= lower: return float(rules[rules['bin'] == b]['WOE'].values[0]), b
+                elif '-' in str(b):
+                    parts = b.split('-')
+                    lower, upper = float(parts[0]), float(parts[1])
+                    if lower <= value <= upper: return float(rules[rules['bin'] == b]['WOE'].values[0]), b
+        elif feature_name == 'duration_binned':
+            for b in rules['bin'].values:
+                clean_b = str(b).replace('(', '').replace('[', '').replace(']', '').replace(')', '')
+                parts = clean_b.split(',')
+                if len(parts) == 2:
+                    lower, upper = float(parts[0]), float(parts[1])
+                    if (lower < value <= upper) or (str(b).startswith('[') and lower <= value <= upper):
+                        return float(rules[rules['bin'] == b]['WOE'].values[0]), b
+        else:
+            match = rules[rules['bin'] == str(value)]
+            if not match.empty:
+                return float(match['WOE'].values[0]), str(value)
+            
+        return 0.0, "Unknown"
+        
+    def explain_customer(self, customer_dict):
+        score = self.offset - self.factor * self.intercept
+        contributions = []
+        
+        log_odds_sum = self.intercept
+        
+        for woe_col in self.features:
+            base_feature = woe_col.replace('_WOE', '')
+            
+            if base_feature == 'age_binned':
+                val = customer_dict.get('age')
+                woe_val, bin_val = self.map_to_woe('age_binned', val)
+            elif base_feature == 'duration_binned':
+                val = customer_dict.get('duration')
+                woe_val, bin_val = self.map_to_woe('duration_binned', val)
+            else:
+                val = customer_dict.get(base_feature)
+                woe_val, bin_val = self.map_to_woe(base_feature, val)
+                
+            coef = self.coefs[woe_col]
+            
+            # Log odds contribution (Logistic regression is trained to predict P(Bad))
+            log_odds_contrib = coef * woe_val
+            log_odds_sum += log_odds_contrib
+            
+            # Score contribution: Score = Offset - Factor * (w^T * x + b)
+            # A negative log_odds_contrib (decreasing risk) increases the score.
+            contrib = - self.factor * log_odds_contrib
+            score += contrib
+            
             contributions.append({
-                'Feature': raw_feature,
-                'Value': raw_val,
-                'Points': points
+                'feature': base_feature,
+                'original_value': val,
+                'bin': bin_val,
+                'woe': woe_val,
+                'coef': coef,
+                'score_contribution': contrib,
+                'log_odds_contribution': log_odds_contrib
             })
             
-        contributions = sorted(contributions, key=lambda x: x['Points'])
+        prob = 1 / (1 + np.exp(-log_odds_sum))
+        final_score = int(round(score))
         
-        # Negative points increase risk (Risk Drivers)
-        risk_drivers = [c for c in contributions if c['Points'] < 0]
-        # Positive points decrease risk (Positive Drivers)
-        positive_drivers = sorted([c for c in contributions if c['Points'] > 0], key=lambda x: x['Points'], reverse=True)
+        if final_score >= 560:
+            grade = "Very Low Risk"
+        elif 530 <= final_score < 560:
+            grade = "Low Risk"
+        elif 500 <= final_score < 530:
+            grade = "Moderate Risk"
+        elif 460 <= final_score < 500:
+            grade = "High Risk"
+        else:
+            grade = "Very High Risk"
+            
+        sorted_contribs = sorted(contributions, key=lambda x: x['score_contribution'])
+        
+        risk_drivers = sorted_contribs[:5]
+        positive_drivers = sorted(contributions, key=lambda x: x['score_contribution'], reverse=True)[:5]
         
         result = {
-            "Credit Score": round(score),
-            "Probability of Default": f"{pd_prob*100:.1f}%",
-            "Risk Grade": risk_grade,
-            "Risk Drivers": risk_drivers[:4],
-            "Positive Drivers": positive_drivers[:4]
+            'Credit Score': final_score,
+            'Probability of Default': prob,
+            'Risk Grade': grade,
+            'Risk Drivers': risk_drivers,
+            'Positive Drivers': positive_drivers,
+            'All Contributions': contributions
         }
         
         return result
+
+    def format_explanation(self, result):
+        lines = []
+        lines.append(f"Credit Score: {result['Credit Score']}")
+        lines.append(f"Probability of Default: {result['Probability of Default'] * 100:.1f}%")
+        lines.append(f"Risk Grade: {result['Risk Grade'].upper()}\n")
+        
+        lines.append("Risk Drivers:")
+        for i, driver in enumerate(result['Risk Drivers'], 1):
+            if driver['score_contribution'] < 0:
+                lines.append(f"{i}. {driver['feature']} (Value: {driver['original_value']}, Bin: {driver['bin']}) -> {driver['score_contribution']:.1f} points")
+            
+        lines.append("\nPositive Drivers:")
+        for i, driver in enumerate(result['Positive Drivers'], 1):
+            if driver['score_contribution'] > 0:
+                lines.append(f"{i}. {driver['feature']} (Value: {driver['original_value']}, Bin: {driver['bin']}) -> +{driver['score_contribution']:.1f} points")
+                
+        lines.append("\n* Note: These are model-derived risk factors, not causal claims. Score boundaries and parameters (Base 600, PDO 20) are illustrative.")
+        return "\n".join(lines)
+
+if __name__ == "__main__":
+    # Test execution
+    explainer = ScorecardExplainer(
+        model_path=os.path.join("artifacts", "model_trainer", "model.joblib"),
+        woe_rules_path=os.path.join("artifacts", "data_transformation", "woe_rules.csv")
+    )
+    
+    # Illustrative customer
+    sample_customer = {
+        "checking_account": "A11",
+        "duration": 12,
+        "credit_history": "A32",
+        "purpose": "A40",
+        "credit_amount": 1295,
+        "savings_account": "A61",
+        "employment": "A72",
+        "personal_status_sex": "A92",
+        "other_debtors": "A101",
+        "property": "A123",
+        "age": 25,
+        "other_installment_plans": "A143",
+        "housing": "A151",
+        "job": "A173",
+        "foreign_worker": "A201"
+    }
+    
+    result = explainer.explain_customer(sample_customer)
+    print(explainer.format_explanation(result))
