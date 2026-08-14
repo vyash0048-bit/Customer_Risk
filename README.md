@@ -1,8 +1,6 @@
 <div align="center">
   
-  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjRtdDRtNXMwcWg0cmUwaDN0cTNnbHhycGx5N3MwczdrbGNpODhqOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L8K62iDadb1xydT6W1/giphy.gif" width="120" alt="Risk Radar Animation" />
-  
-  # 🚀 Customer Risk Intelligence
+  # 🏦 📡 Customer Risk Intelligence
   **Enterprise-Grade Machine Learning Pipeline & Scorecard Dashboard**
 
   [![Live Demo](https://img.shields.io/badge/Live_Demo-Online-success?style=for-the-badge&logo=vercel)](https://tinyurl.com/w7mfe2cw)
