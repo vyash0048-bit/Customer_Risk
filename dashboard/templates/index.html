@@ -176,6 +176,14 @@
                             <span>System Recommendation</span>
                         </div>
                     </div>
+                    
+                    <div style="margin-top: 1rem; font-size: 0.8rem; padding: 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.2);">
+                        {% if result['db_status'] == 'success' %}
+                        <span style="color: var(--success);">✓ Audit Log Saved to PostgreSQL</span>
+                        {% else %}
+                        <span style="color: var(--danger);">⚠ DB Error: {{ result['db_status'] }}</span>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <div class="card drivers-card animate-slide-up" style="animation-delay: 0.3s;">

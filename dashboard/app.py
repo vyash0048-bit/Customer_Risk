@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import sys
 import os
 
@@ -7,6 +7,40 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.CustomerRiskPrediction.components.scorecard import ScorecardExplainer
 
 app = Flask(__name__)
+
+from dotenv import load_dotenv
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
+# Load environment variables
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+
+# Database Configuration
+DB_USER = os.environ.get("DB_USER", "postgres")
+DB_PASSWORD = os.environ.get("DB_PASSWORD", "postgres")
+DB_HOST = os.environ.get("DB_HOST", "localhost")
+DB_PORT = os.environ.get("DB_PORT", "5432")
+DB_NAME = os.environ.get("DB_NAME", "credit_risk")
+
+import urllib.parse
+DB_PASSWORD_ENCODED = urllib.parse.quote_plus(DB_PASSWORD)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{DB_USER}:{DB_PASSWORD_ENCODED}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+class PredictionAudit(db.Model):
+    __tablename__ = 'prediction_audit'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    age = db.Column(db.Float)
+    credit_amount = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    credit_score = db.Column(db.Integer)
+    prob_default = db.Column(db.Float)
+    decision = db.Column(db.String(50))
+    risk_grade = db.Column(db.String(50))
 
 # Initialize explainer (paths are relative to the dashboard directory when running from it, 
 # so we assume running from the root directory or adjust paths accordingly)
@@ -63,9 +97,95 @@ def index():
             result['Decision'] = "APPROVE"
             result['Decision_Class'] = "approve"
         print(f"DEBUG: Final Decision is {result['Decision']}")
+        
+        # Save to PostgreSQL Audit Log
+        try:
+            audit_record = PredictionAudit(
+                age=customer_data['age'],
+                credit_amount=customer_data['credit_amount'],
+                duration=customer_data['duration'],
+                credit_score=result['Credit Score'],
+                prob_default=float(result['Probability of Default']),
+                decision=result['Decision'],
+                risk_grade=result['Risk Grade']
+            )
+            db.session.add(audit_record)
+            db.session.commit()
+            result['db_status'] = "success"
+            print("Successfully saved prediction to PostgreSQL database.")
+        except Exception as e:
+            print(f"Error saving to database: {e}")
+            db.session.rollback()
+            result['db_status'] = f"error: {str(e)}"
             
     form_data = request.form if request.method == 'POST' else {}
     return render_template('index.html', result=result, form=form_data)
+
+@app.route('/api/v1/predict', methods=['POST'])
+def api_predict():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+            
+        customer_data = {
+            "age": float(data.get("age", 30)),
+            "employment": data.get("employment", "A73"),
+            "housing": data.get("housing", "A152"),
+            "credit_amount": float(data.get("credit_amount", 2000)),
+            "duration": float(data.get("duration", 24)),
+            "checking_account": data.get("checking_account", "A14"),
+            "savings_account": data.get("savings_account", "A65"),
+            "credit_history": data.get("credit_history", "A32"),
+            "purpose": data.get("purpose", "A43"),
+            "personal_status_sex": data.get("personal_status_sex", "A93"),
+            "other_debtors": data.get("other_debtors", "A101"),
+            "property": data.get("property", "A121"),
+            "other_installment_plans": data.get("other_installment_plans", "A143"),
+            "job": data.get("job", "A173"),
+            "foreign_worker": data.get("foreign_worker", "A201")
+        }
+        
+        result = explainer.explain_customer(customer_data)
+        score = result['Credit Score']
+        
+        if score < 500:
+            decision = "REJECT"
+        elif 500 <= score < 540:
+            decision = "MANUAL REVIEW"
+        else:
+            decision = "APPROVE"
+            
+        # Log to Database
+        try:
+            audit_record = PredictionAudit(
+                age=customer_data['age'],
+                credit_amount=customer_data['credit_amount'],
+                duration=customer_data['duration'],
+                credit_score=score,
+                prob_default=float(result['Probability of Default']),
+                decision=decision,
+                risk_grade=result['Risk Grade']
+            )
+            db.session.add(audit_record)
+            db.session.commit()
+            db_status = "success"
+        except Exception as e:
+            db.session.rollback()
+            db_status = f"error: {str(e)}"
+            
+        return jsonify({
+            "status": "success",
+            "db_status": db_status,
+            "credit_score": score,
+            "probability_of_default": result['Probability of Default'],
+            "risk_grade": result['Risk Grade'],
+            "decision": decision,
+            "features_used": customer_data
+        }), 200
+        
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/model-info')
 def model_info():
@@ -79,4 +199,6 @@ def model_info():
     return render_template('model_info.html', metrics=metrics)
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True, port=5000)

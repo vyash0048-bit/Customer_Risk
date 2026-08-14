@@ -10,5 +10,9 @@ ensure==1.0.2
 joblib
 types-PyYAML
 Flask
+Flask-SQLAlchemy
+psycopg2-binary
+python-dotenv
+gunicorn
 dvc
 -e .

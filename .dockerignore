@@ -1,0 +1,25 @@
+.venv
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env.bak/
+.env
+
+# DVC and Git
+.dvc/
+.git/
+.github/
+
+# Ignore local data
+data/
+logs/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
