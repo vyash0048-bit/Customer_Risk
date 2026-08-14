@@ -1,0 +1,16 @@
+# Core Data Science & Model Loading
+pandas
+numpy
+scikit-learn
+joblib
+
+# Dashboard & API Web Server
+Flask
+gunicorn
+
+# Database & Environment
+Flask-SQLAlchemy
+psycopg2-binary
+python-dotenv
+
+# Install local package (for ScorecardExplainer imports)

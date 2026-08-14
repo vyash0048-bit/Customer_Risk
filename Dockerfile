@@ -9,12 +9,11 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the requirements file and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application
+# Copy the requirements file and the rest of the application
 COPY . .
+
+# Install dependencies using the lightweight production requirements
+RUN pip install --default-timeout=100 --no-cache-dir -r requirements.prod.txt
 
 # Expose the Flask port
 EXPOSE 5000
