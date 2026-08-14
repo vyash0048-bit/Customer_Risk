@@ -1,0 +1,83 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        stroke-opacity: 1;
+        fill-opacity: 0.1;
+      }
+      100% {
+        transform: scale(1.8);
+        stroke-opacity: 0;
+        fill-opacity: 0;
+      }
+    }
+    @keyframes sweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .circle-bg { fill: #1e1e2f; stroke: #4a4a6a; stroke-width: 2; }
+    .pulse-ring {
+      fill: none;
+      stroke: #00e5ff;
+      stroke-width: 2;
+      transform-origin: center;
+      animation: pulse 2s infinite ease-out;
+    }
+    .pulse-ring-2 {
+      fill: none;
+      stroke: #00e5ff;
+      stroke-width: 2;
+      transform-origin: center;
+      animation: pulse 2s infinite ease-out;
+      animation-delay: 1s;
+    }
+    .sweep {
+      fill: url(#radar-gradient);
+      transform-origin: center;
+      animation: sweep 3s infinite linear;
+    }
+    .dot { fill: #00e5ff; }
+  </style>
+  
+  <defs>
+    <conicGradient id="radar-gradient" cx="50%" cy="50%" angle="0deg">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.8" />
+      <stop offset="25%" stop-color="#00e5ff" stop-opacity="0" />
+    </conicGradient>
+    <!-- Fallback linear gradient for older viewers if conic isn't supported, but conic is standard in SVG2. Let's use a standard radial/linear or just a polygon for safety. -->
+    <linearGradient id="beam" x1="0%" y1="50%" x2="50%" y2="50%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0" />
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.6" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(60, 60)">
+    <!-- Base Circles -->
+    <circle cx="0" cy="0" r="40" class="circle-bg" />
+    <circle cx="0" cy="0" r="25" fill="none" stroke="#2b2b40" stroke-width="1" />
+    <circle cx="0" cy="0" r="10" fill="none" stroke="#2b2b40" stroke-width="1" />
+    
+    <!-- Crosshairs -->
+    <line x1="-40" y1="0" x2="40" y2="0" stroke="#4a4a6a" stroke-width="1" stroke-dasharray="2,2" />
+    <line x1="0" y1="-40" x2="0" y2="40" stroke="#4a4a6a" stroke-width="1" stroke-dasharray="2,2" />
+
+    <!-- Animated Pulse Rings -->
+    <circle cx="0" cy="0" r="20" class="pulse-ring" />
+    <circle cx="0" cy="0" r="20" class="pulse-ring-2" />
+
+    <!-- Radar Sweep Beam (Rotates) -->
+    <g class="sweep">
+      <path d="M 0 0 L 0 -40 A 40 40 0 0 1 28.28 -28.28 Z" fill="url(#beam)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="#00e5ff" stroke-width="1.5" />
+    </g>
+
+    <!-- Detected Blips -->
+    <circle cx="15" cy="-20" r="2.5" class="dot">
+      <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+    </circle>
+    <circle cx="-25" cy="10" r="2" class="dot">
+      <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite" begin="1.5s"/>
+    </circle>
+  </g>
+</svg>

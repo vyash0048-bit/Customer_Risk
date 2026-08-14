@@ -1,5 +1,8 @@
 <div align="center">
   
+  <img src="assets/hero-radar.svg" width="140" alt="Risk Radar Animation" />
+  <br/>
+  
   # 🏦 📡 Customer Risk Intelligence
   **Enterprise-Grade Machine Learning Pipeline & Scorecard Dashboard**
 
@@ -43,6 +46,20 @@
 ---
 
 ## 🚦 How the Scorecard Works
+
+```mermaid
+graph TD
+    A[Raw Financial Data] --> B{Weight of Evidence Binning}
+    B -->|Calculate Log-Odds| C[Logistic Regression Model]
+    C --> D(Score Transformation)
+    D --> E((Final Credit Score: 400-600))
+    
+    style A fill:#1e1e2f,stroke:#4a4a6a,color:#ffffff
+    style B fill:#2b2b40,stroke:#6a6a8a,color:#00e5ff
+    style C fill:#2b2b40,stroke:#6a6a8a,color:#00e5ff
+    style D fill:#2b2b40,stroke:#6a6a8a,color:#00e5ff
+    style E fill:#00e5ff,stroke:#00a3cc,color:#000000,stroke-width:2px
+```
 
 1. **WOE Binning:** Continuous and categorical variables are bucketed into discrete bins. Each bin is assigned a WOE value reflecting the log-odds ratio of good vs. bad customers.
 2. **Linear Predictor:** A Logistic Regression model assigns strict coefficients to each WOE variable.
@@ -111,6 +128,23 @@ This single command will build the Python environment, download dependencies, st
 ---
 
 ## ☁️ Cloud Architecture (AWS)
+
+```mermaid
+graph LR
+    User([End User]) -->|HTTP :5000| EC2[AWS EC2 Instance]
+    
+    subgraph EC2 [Ubuntu Linux Server]
+        subgraph Docker [Docker Compose Network]
+            Web[Flask Gunicorn Server] <-->|SQL Alchemy| DB[(PostgreSQL Database)]
+        end
+    end
+    
+    style User fill:#00e5ff,stroke:#00a3cc,color:#000
+    style EC2 fill:#232f3e,stroke:#ff9900,color:#fff,stroke-width:2px
+    style Docker fill:#0db7ed,stroke:#007acc,color:#000
+    style Web fill:#1e1e2f,stroke:#4a4a6a,color:#fff
+    style DB fill:#336791,stroke:#234b6b,color:#fff
+```
 
 This application is deployed on a highly scalable cloud architecture:
 *   **Host:** AWS EC2 (`t2.micro` running Ubuntu 22.04 LTS)
