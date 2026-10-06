@@ -3,6 +3,7 @@
 services:
   db:
     image: postgres:15-alpine
+    restart: unless-stopped
     container_name: credit_risk_db
     environment:
       POSTGRES_USER: postgres
@@ -20,6 +21,7 @@ services:
 
   web:
     build: .
+    restart: unless-stopped
     container_name: credit_risk_web
     ports:
       - "5000:5000"
