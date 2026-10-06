@@ -55,6 +55,12 @@ jobs:
             # Pull the latest changes from GitHub
             git pull origin master
             
+            # Create a 2GB swap file to prevent Out of Memory (OOM) errors during build
+            sudo fallocate -l 2G /swapfile || true
+            sudo chmod 600 /swapfile || true
+            sudo mkswap /swapfile || true
+            sudo swapon /swapfile || true
+
             # Rebuild and restart the Docker containers in the background
             sudo docker-compose up --build -d
             
