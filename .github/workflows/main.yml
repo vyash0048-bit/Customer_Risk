@@ -60,3 +60,13 @@ jobs:
             
             # Prune old dangling images to save disk space
             sudo docker image prune -f
+
+            # Debugging info
+            echo "Disk Space:"
+            df -h
+            echo "Container Status:"
+            sudo docker ps -a
+            echo "DB Logs:"
+            sudo docker logs credit_risk_db --tail 20 || true
+            echo "Web Logs:"
+            sudo docker logs credit_risk_web --tail 20 || true
