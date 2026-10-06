@@ -55,8 +55,14 @@ jobs:
             # Pull the latest changes from GitHub
             git pull origin master
             
-            # Create a 2GB swap file to prevent Out of Memory (OOM) errors during build
-            sudo fallocate -l 2G /swapfile || true
+            # Deep clean Docker to free up disk space on 8GB EC2 instance
+            sudo docker builder prune -a -f || true
+            sudo docker image prune -a -f || true
+            sudo apt-get clean || true
+            sudo rm -f /swapfile || true
+            
+            # Create a 1GB swap file to prevent Out of Memory (OOM) errors during build
+            sudo fallocate -l 1G /swapfile || true
             sudo chmod 600 /swapfile || true
             sudo mkswap /swapfile || true
             sudo swapon /swapfile || true
