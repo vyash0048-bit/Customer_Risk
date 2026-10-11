@@ -19,6 +19,12 @@
 
 > ### 🌐 **[Experience the Live Application Here!](https://tinyurl.com/w7mfe2cw)**
 
+<br />
+
+<div align="center">
+  <img src="Customer%20Risk.gif" alt="Customer Risk Intelligence Dashboard Demo" width="100%" />
+</div>
+
 ---
 
 ## ✨ Key Features
