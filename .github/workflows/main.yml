@@ -63,19 +63,26 @@ jobs:
             if [ ! -f .env ] && [ -f /tmp/.env.backup ]; then mv /tmp/.env.backup .env; fi
             rm -f /tmp/.env.backup
 
-            # Deep clean Docker to free up disk space on 8GB EC2 instance
+            # Stop old web container first so its ~1GB image can be pruned before rebuilding
+            sudo docker rm -f credit_risk_web || true
             sudo docker builder prune -a -f || true
             sudo docker image prune -a -f || true
             sudo apt-get clean || true
+            sudo journalctl --vacuum-size=50M || true
+            sudo swapoff -a || true
             sudo rm -f /swapfile || true
 
-            # Create a 1GB swap file to prevent Out of Memory (OOM) errors during build
-            sudo fallocate -l 1G /swapfile || true
+            # Create a 512MB swap file to prevent OOM without starving the 6.7GB root disk
+            sudo fallocate -l 512M /swapfile || true
             sudo chmod 600 /swapfile || true
             sudo mkswap /swapfile || true
             sudo swapon /swapfile || true
 
-            # Rebuild and restart the Docker containers in the background
+            echo "Disk Space Before Build:"
+            df -h
+
+            # Rebuild and restart the Docker containers (fail job if build/startup fails)
+            set -e
             sudo docker-compose up --build -d
 
             # Prune old dangling images to save disk space
