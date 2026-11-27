@@ -8,15 +8,21 @@ __pycache__/
 .Python
 env.bak/
 .env
+.pytest_cache/
 
 # DVC and Git
 .dvc/
 .git/
 .github/
 
-# Ignore local data
+# Ignore local data, docs, media, and tests not needed at runtime
 data/
 logs/
+research/
+tests/
+assets/
+Customer Risk.gif
+PROJECT_OVERVIEW.md
 
 # IDEs
 .vscode/
