@@ -64,12 +64,12 @@ class DataIngestion:
                     conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {schema}"))
                     conn.commit()
                     
-            logger.info(f"Loading data into PostgreSQL table {schema}.{table}")
+            logger.info(f"Replacing data in PostgreSQL table {schema}.{table}")
             df.to_sql(
                 name=table,
                 con=engine,
                 schema=schema,
-                if_exists="append",
+                if_exists="replace",
                 index=False
             )
             logger.info("Data successfully loaded into PostgreSQL.")

@@ -1,1 +1,7 @@
-{"lr_threshold": 0.25}
+{
+  "lr_threshold": 0.1,
+  "val_f2_score": 0.7239057239057239,
+  "pi_true": 0.3,
+  "pi_smote": 0.5,
+  "prior_odds_shift": -0.8472978603872036
+}

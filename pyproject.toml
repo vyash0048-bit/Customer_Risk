@@ -1,7 +1,11 @@
 [project]
 name = "customer-risk"
 version = "0.1.0"
-description = "Add your description here"
+description = "End-to-end Credit Risk Scorecard & Default Prediction Platform"
 readme = "README.md"
-requires-python = ">=3.12.13"
+requires-python = ">=3.12"
 dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

@@ -11,8 +11,14 @@ joblib
 types-PyYAML
 Flask
 Flask-SQLAlchemy
+SQLAlchemy
 psycopg2-binary
 python-dotenv
 gunicorn
 dvc
+optuna
+imbalanced-learn
+statsmodels
+pytest
+flake8
 -e .

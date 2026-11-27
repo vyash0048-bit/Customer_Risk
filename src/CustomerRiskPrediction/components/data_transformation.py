@@ -1,17 +1,33 @@
 import os
+import sys
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from CustomerRiskPrediction.logger import logger
 from CustomerRiskPrediction.entity.config_entity import DataTransformationConfig
-import sys
 
-# Assume woe_iv.py is at the root of src
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from woe_iv import calculate_woe_iv, transform_to_woe
+
+PROTECTED_ATTRIBUTES = {"personal_status_sex", "foreign_worker"}
+
 
 class DataTransformation:
     def __init__(self, config: DataTransformationConfig):
         self.config = config
+
+    @staticmethod
+    def _qcut_open_ended(train_series: pd.Series, val_series: pd.Series, test_series: pd.Series, q: int = 5):
+        """Fit quantile bin edges on training data and extend outer edges to (-inf, +inf)."""
+        _, bin_edges = pd.qcut(train_series, q=q, duplicates="drop", retbins=True)
+        bin_edges = bin_edges.astype(float)
+        bin_edges[0] = -np.inf
+        bin_edges[-1] = np.inf
+
+        train_binned = pd.cut(train_series, bins=bin_edges, include_lowest=True).astype(str)
+        val_binned = pd.cut(val_series, bins=bin_edges, include_lowest=True).astype(str)
+        test_binned = pd.cut(test_series, bins=bin_edges, include_lowest=True).astype(str)
+        return train_binned, val_binned, test_binned
 
     def perform_transformation(self):
         try:
@@ -33,30 +49,38 @@ class DataTransformation:
                 stratify=temp["credit_risk"],
                 random_state=42
             )
-            
+            train = train.copy()
+            validation = validation.copy()
+            test = test.copy()
+
             logger.info(f"Train size: {train.shape}, Val size: {validation.shape}, Test size: {test.shape}")
 
-            logger.info("Binning numerical variables")
-            # Binning Age
-            train['age_binned'] = pd.cut(train['age'], bins=[17, 25, 35, 45, 55, 120], labels=['18-25', '26-35', '36-45', '46-55', '56+'])
-            validation['age_binned'] = pd.cut(validation['age'], bins=[17, 25, 35, 45, 55, 120], labels=['18-25', '26-35', '36-45', '46-55', '56+'])
-            test['age_binned'] = pd.cut(test['age'], bins=[17, 25, 35, 45, 55, 120], labels=['18-25', '26-35', '36-45', '46-55', '56+'])
+            logger.info("Binning numerical variables with open-ended outer bounds")
+            age_bins = [-np.inf, 25, 35, 45, 55, np.inf]
+            age_labels = ['<=25', '26-35', '36-45', '46-55', '56+']
+            train['age_binned'] = pd.cut(train['age'], bins=age_bins, labels=age_labels).astype(str)
+            validation['age_binned'] = pd.cut(validation['age'], bins=age_bins, labels=age_labels).astype(str)
+            test['age_binned'] = pd.cut(test['age'], bins=age_bins, labels=age_labels).astype(str)
 
-            # Using qcut on train for duration, and mapping the bins to val/test
-            train['duration_binned'], duration_bins = pd.qcut(train['duration'], q=5, duplicates="drop", retbins=True)
-            validation['duration_binned'] = pd.cut(validation['duration'], bins=duration_bins, include_lowest=True)
-            test['duration_binned'] = pd.cut(test['duration'], bins=duration_bins, include_lowest=True)
-
-            # Convert intervals to string representation
-            train['duration_binned'] = train['duration_binned'].astype(str)
-            validation['duration_binned'] = validation['duration_binned'].astype(str)
-            test['duration_binned'] = test['duration_binned'].astype(str)
+            train['duration_binned'], validation['duration_binned'], test['duration_binned'] = self._qcut_open_ended(
+                train['duration'], validation['duration'], test['duration'], q=5
+            )
+            train['credit_amount_binned'], validation['credit_amount_binned'], test['credit_amount_binned'] = self._qcut_open_ended(
+                train['credit_amount'], validation['credit_amount'], test['credit_amount'], q=5
+            )
 
             logger.info("Calculating WOE & IV mapping on Train Data")
-            categorical_cols = [col for col in df.columns if df[col].dtype.name in ['object', 'category', 'string', 'str'] and col != 'credit_risk']
+            categorical_cols = [
+                col for col in df.columns
+                if df[col].dtype.name in ['object', 'category', 'string', 'str'] and col != 'credit_risk'
+            ]
+            if self.config.exclude_protected_attributes:
+                logger.info(f"Excluding protected attributes: {sorted(PROTECTED_ATTRIBUTES)}")
+                categorical_cols = [col for col in categorical_cols if col not in PROTECTED_ATTRIBUTES]
+
             logger.info(f"Categorical cols identified: {categorical_cols}")
-            candidate_features = categorical_cols + ['age_binned', 'duration_binned']
-            
+            candidate_features = categorical_cols + ['age_binned', 'duration_binned', 'credit_amount_binned']
+
             all_woe_rules = []
             features_to_transform = []
 
@@ -64,8 +88,7 @@ class DataTransformation:
                 rules = calculate_woe_iv(train, f, 'credit_risk')
                 rules['feature'] = f
                 total_iv = rules['IV'].sum()
-                
-                # Keep variables with IV >= 0.02
+
                 if total_iv >= 0.02:
                     all_woe_rules.append(rules)
                     features_to_transform.append(f)
@@ -83,8 +106,7 @@ class DataTransformation:
                 test = transform_to_woe(test, f, rules)
 
             woe_cols = [f"{f}_WOE" for f in features_to_transform]
-            # Keep original features and newly created WOE features
-            final_columns = list(df.columns) + ['age_binned', 'duration_binned'] + woe_cols
+            final_columns = list(df.columns) + ['age_binned', 'duration_binned', 'credit_amount_binned'] + woe_cols
 
             train = train[final_columns]
             validation = validation[final_columns]

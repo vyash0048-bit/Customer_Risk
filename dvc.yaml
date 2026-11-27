@@ -5,6 +5,7 @@ stages:
       - src/CustomerRiskPrediction/pipeline/stage_01_data_ingestion.py
       - src/CustomerRiskPrediction/components/data_ingestion.py
       - config/config.yaml
+      - data/raw/german.data
     outs:
       - artifacts/data_ingestion/data.csv
 
@@ -16,6 +17,8 @@ stages:
       - src/woe_iv.py
       - config/config.yaml
       - artifacts/data_ingestion/data.csv
+    params:
+      - LogisticRegression.exclude_protected_attributes
     outs:
       - artifacts/data_transformation/train.csv
       - artifacts/data_transformation/val.csv
@@ -29,10 +32,12 @@ stages:
       - src/CustomerRiskPrediction/components/model_trainer.py
       - config/config.yaml
       - artifacts/data_transformation/train.csv
+      - artifacts/data_transformation/val.csv
     params:
       - LogisticRegression.max_iter
       - LogisticRegression.random_state
       - LogisticRegression.solver
+      - LogisticRegression.n_trials
     outs:
       - artifacts/model_trainer/model.joblib
       - artifacts/model_trainer/lr_threshold.json

@@ -1,4 +1,6 @@
 LogisticRegression:
   max_iter: 1000
   random_state: 42
-  solver: 'liblinear'
+  solver: saga
+  n_trials: 50
+  exclude_protected_attributes: false

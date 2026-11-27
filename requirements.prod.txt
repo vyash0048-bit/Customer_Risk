@@ -10,7 +10,6 @@ gunicorn
 
 # Database & Environment
 Flask-SQLAlchemy
+SQLAlchemy
 psycopg2-binary
 python-dotenv
-
-# Install local package (for ScorecardExplainer imports)

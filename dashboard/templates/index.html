@@ -18,12 +18,12 @@
                     </div>
                     <div class="header-text">
                         <h1>Customer Risk Intelligence</h1>
-                        <p>AI-Powered Scorecard & Default Prediction</p>
+                        <p>AI-Powered Scorecard &amp; Default Prediction</p>
                     </div>
                 </div>
                 <nav class="nav-links">
                     <a href="/" class="nav-item active">Dashboard</a>
-                    <a href="/model-info" class="nav-item">Model & Metrics</a>
+                    <a href="/model-info" class="nav-item">Model &amp; Metrics</a>
                 </nav>
             </div>
         </header>
@@ -32,100 +32,51 @@
             <section class="card form-section animate-slide-up" style="animation-delay: 0.1s;">
                 <div class="card-header">
                     <h2>Application Details</h2>
-                    <span class="badge">New Assessment</span>
+                    <span class="badge">{{ fields|length }} Active Features</span>
                 </div>
-                
+
+                {% if errors %}
+                <div style="background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                    <strong>Validation Error:</strong>
+                    <ul style="margin-left: 1.25rem; margin-top: 0.35rem;">
+                        {% for err in errors %}
+                        <li>{{ err }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
                 <form method="POST" action="/">
                     <div class="form-grid">
+                        {% for field in fields %}
                         <div class="form-group">
-                            <label for="age">Age</label>
-                            <input type="number" id="age" name="age" required placeholder="e.g. 35" value="{{ form.get('age', 35) }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="duration">Loan Duration (Months)</label>
-                            <input type="number" id="duration" name="duration" required placeholder="e.g. 24" value="{{ form.get('duration', 24) }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="credit_amount">Credit Amount ($)</label>
-                            <input type="number" id="credit_amount" name="credit_amount" required placeholder="e.g. 5000" value="{{ form.get('credit_amount', 5000) }}">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="checking_account">Checking Account</label>
+                            <label for="{{ field['name'] }}">{{ field['label'] }}</label>
+                            {% if field['type'] == 'number' %}
+                            <input
+                                type="number"
+                                id="{{ field['name'] }}"
+                                name="{{ field['name'] }}"
+                                required
+                                min="{{ field['min'] }}"
+                                max="{{ field['max'] }}"
+                                step="{{ field['step'] }}"
+                                placeholder="{{ field['placeholder'] }}"
+                                value="{{ form.get(field['name'], field['default']) }}"
+                            >
+                            {% else %}
                             <div class="select-wrapper">
-                                <select id="checking_account" name="checking_account">
-                                    <option value="A11" {% if form.get('checking_account') == 'A11' %}selected{% endif %}>< 0 DM</option>
-                                    <option value="A12" {% if form.get('checking_account') == 'A12' %}selected{% endif %}>0 <= x < 200 DM</option>
-                                    <option value="A13" {% if form.get('checking_account') == 'A13' %}selected{% endif %}>>= 200 DM / salary assignments</option>
-                                    <option value="A14" {% if form.get('checking_account', 'A14') == 'A14' %}selected{% endif %}>No checking account</option>
+                                <select id="{{ field['name'] }}" name="{{ field['name'] }}" required>
+                                    {% set selected_val = form.get(field['name'], field['default']) %}
+                                    {% for code, label in field['options'] %}
+                                    <option value="{{ code }}" {% if selected_val == code %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
+                            {% endif %}
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="savings_account">Savings Account</label>
-                            <div class="select-wrapper">
-                                <select id="savings_account" name="savings_account">
-                                    <option value="A61" {% if form.get('savings_account') == 'A61' %}selected{% endif %}>< 100 DM</option>
-                                    <option value="A62" {% if form.get('savings_account') == 'A62' %}selected{% endif %}>100 <= x < 500 DM</option>
-                                    <option value="A63" {% if form.get('savings_account') == 'A63' %}selected{% endif %}>500 <= x < 1000 DM</option>
-                                    <option value="A64" {% if form.get('savings_account') == 'A64' %}selected{% endif %}>>= 1000 DM</option>
-                                    <option value="A65" {% if form.get('savings_account', 'A65') == 'A65' %}selected{% endif %}>Unknown/ no savings account</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="employment">Employment Duration</label>
-                            <div class="select-wrapper">
-                                <select id="employment" name="employment">
-                                    <option value="A71" {% if form.get('employment') == 'A71' %}selected{% endif %}>Unemployed</option>
-                                    <option value="A72" {% if form.get('employment') == 'A72' %}selected{% endif %}>< 1 year</option>
-                                    <option value="A73" {% if form.get('employment', 'A73') == 'A73' %}selected{% endif %}>1 <= x < 4 years</option>
-                                    <option value="A74" {% if form.get('employment') == 'A74' %}selected{% endif %}>4 <= x < 7 years</option>
-                                    <option value="A75" {% if form.get('employment') == 'A75' %}selected{% endif %}>>= 7 years</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="credit_history">Credit History</label>
-                            <div class="select-wrapper">
-                                <select id="credit_history" name="credit_history">
-                                    <option value="A30" {% if form.get('credit_history') == 'A30' %}selected{% endif %}>No credits taken/all paid back</option>
-                                    <option value="A31" {% if form.get('credit_history') == 'A31' %}selected{% endif %}>All credits paid back duly</option>
-                                    <option value="A32" {% if form.get('credit_history', 'A32') == 'A32' %}selected{% endif %}>Existing credits paid back duly</option>
-                                    <option value="A33" {% if form.get('credit_history') == 'A33' %}selected{% endif %}>Delay in paying off</option>
-                                    <option value="A34" {% if form.get('credit_history') == 'A34' %}selected{% endif %}>Critical account</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="housing">Housing</label>
-                            <div class="select-wrapper">
-                                <select id="housing" name="housing">
-                                    <option value="A151" {% if form.get('housing') == 'A151' %}selected{% endif %}>Rent</option>
-                                    <option value="A152" {% if form.get('housing', 'A152') == 'A152' %}selected{% endif %}>Own</option>
-                                    <option value="A153" {% if form.get('housing') == 'A153' %}selected{% endif %}>For free</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="purpose">Purpose</label>
-                            <div class="select-wrapper">
-                                <select id="purpose" name="purpose">
-                                    <option value="A40" {% if form.get('purpose') == 'A40' %}selected{% endif %}>Car (new)</option>
-                                    <option value="A41" {% if form.get('purpose') == 'A41' %}selected{% endif %}>Car (used)</option>
-                                    <option value="A42" {% if form.get('purpose') == 'A42' %}selected{% endif %}>Furniture/equipment</option>
-                                    <option value="A43" {% if form.get('purpose', 'A43') == 'A43' %}selected{% endif %}>Radio/TV</option>
-                                    <option value="A49" {% if form.get('purpose') == 'A49' %}selected{% endif %}>Business</option>
-                                </select>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
-                    
+
                     <button type="submit" class="btn-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4"/><path d="M12 16V8"/></svg>
                         Calculate Risk Profile
@@ -136,12 +87,10 @@
             {% if result %}
             <section class="results-section">
                 <div class="card result-hero animate-slide-up" style="animation-delay: 0.2s;">
-                    
+
                     <div class="gauge-container">
                         <svg viewBox="0 0 200 120" class="gauge">
-                            <!-- Background track -->
                             <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" />
-                            <!-- Colored fill -->
                             <path class="gauge-fill {{ result['Decision_Class'] }}" d="M 20 100 A 80 80 0 0 1 180 100" style="stroke-dasharray: {{ result['Score_Percent'] * 2.51 }} 251;" />
                         </svg>
                         <div class="gauge-text">
@@ -149,7 +98,7 @@
                             <span class="score-label">Credit Score</span>
                         </div>
                     </div>
-                    
+
                     <div class="stats-row">
                         <div class="stat-box">
                             <span class="stat-label">Probability of Default</span>
@@ -173,10 +122,10 @@
                         </div>
                         <div class="decision-text">
                             <strong>{{ result['Decision'] }}</strong>
-                            <span>System Recommendation</span>
+                            <span>Approve &ge; {{ result['Approve Score Min'] }} | Reject &le; {{ result['Reject Score Max'] }}</span>
                         </div>
                     </div>
-                    
+
                     <div style="margin-top: 1rem; font-size: 0.8rem; padding: 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.2);">
                         {% if result['db_status'] == 'success' %}
                         <span style="color: var(--success);">✓ Audit Log Saved to PostgreSQL</span>
@@ -191,7 +140,7 @@
                         <h3>Score Contribution by Feature</h3>
                         <p>Mathematical breakdown of the risk drivers</p>
                     </div>
-                    
+
                     <div class="drivers-group">
                         <h4>Top Risk Drivers (Score Penalties)</h4>
                         <ul class="driver-list risk">

@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 # Set the working directory
 WORKDIR /app
@@ -12,8 +12,9 @@ RUN apt-get update && apt-get install -y \
 # Copy the requirements file and the rest of the application
 COPY . .
 
-# Install dependencies using the lightweight production requirements
-RUN pip install --default-timeout=100 --no-cache-dir -r requirements.prod.txt
+# Install production runtime dependencies and local package without pulling dev deps
+RUN pip install --default-timeout=100 --no-cache-dir -r requirements.prod.txt \
+    && pip install --no-cache-dir --no-deps -e .
 
 # Expose the Flask port
 EXPOSE 5000
